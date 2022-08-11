@@ -21,7 +21,7 @@ Manages an IotHub Fallback Route
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_storage_account" "example" {
@@ -55,7 +55,7 @@ resource "azurerm_iothub" "example" {
 
 resource "azurerm_iothub_endpoint_storage_container" "example" {
   resource_group_name = azurerm_resource_group.example.name
-  iothub_name         = azurerm_iothub.example.name
+  iothub_id           = azurerm_iothub.example.id
   name                = "example"
 
   connection_string          = azurerm_storage_account.example.primary_blob_connection_string
@@ -84,6 +84,8 @@ The following arguments are supported:
 
 * `iothub_name` - (Required) The name of the IoTHub to which this Fallback Route belongs. Changing this forces a new resource to be created.
 
+* `source` - (Required) The source that the routing rule is to be applied to. Possible values include: `DeviceConnectionStateEvents`, `DeviceJobLifecycleEvents`, `DeviceLifecycleEvents`, `DeviceMessages`, `Invalid`, `TwinChangeEvents`.
+
 * `enabled` - (Required) Used to specify whether the fallback route is enabled.
 
 * `endpoint_names` - (Required) The endpoints to which messages that satisfy the condition are routed. Currently only 1 endpoint is allowed.
@@ -100,7 +102,7 @@ The following attributes are exported:
 
 
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the IotHub Fallback Route.
 * `update` - (Defaults to 30 minutes) Used when updating the IotHub Fallback Route.
@@ -112,6 +114,6 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 IoTHub Fallback Route can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_iothub_route.route1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Devices/IotHubs/hub1/FallbackRoute/default
+terraform import azurerm_iothub_fallback_route.route1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Devices/IotHubs/hub1/FallbackRoute/default
 ```
 ~> **NOTE:** As there may only be a single fallback route per IoTHub, the id always ends with `/FallbackRoute/default`.

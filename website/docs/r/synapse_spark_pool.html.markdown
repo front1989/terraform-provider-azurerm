@@ -40,6 +40,10 @@ resource "azurerm_synapse_workspace" "example" {
   storage_data_lake_gen2_filesystem_id = azurerm_storage_data_lake_gen2_filesystem.example.id
   sql_administrator_login              = "sqladminuser"
   sql_administrator_login_password     = "H@Sh1CoR3!"
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
 
 resource "azurerm_synapse_spark_pool" "example" {
@@ -47,6 +51,7 @@ resource "azurerm_synapse_spark_pool" "example" {
   synapse_workspace_id = azurerm_synapse_workspace.example.id
   node_size_family     = "MemoryOptimized"
   node_size            = "Small"
+  cache_size           = 100
 
   auto_scale {
     max_node_count = 50
@@ -55,6 +60,21 @@ resource "azurerm_synapse_spark_pool" "example" {
 
   auto_pause {
     delay_in_minutes = 15
+  }
+
+  library_requirement {
+    content  = <<EOF
+appnope==0.1.0
+beautifulsoup4==4.6.3
+EOF
+    filename = "requirements.txt"
+  }
+
+  spark_config {
+    content  = <<EOF
+spark.shuffle.spill                true
+EOF
+    filename = "config.txt"
   }
 
   tags = {
@@ -81,13 +101,25 @@ The following arguments are supported:
 
 * `auto_pause` - (Optional)  An `auto_pause` block as defined below.
 
+* `cache_size` - (Optional) The cache size in the Spark Pool.
+
+* `compute_isolation_enabled` - (Optional) Indicates whether compute isolation is enabled or not. Defaults to `false`. 
+
+~> **NOTE:** The `compute_isolation_enabled` is only available with the XXXLarge (80 vCPU / 504 GB) node size and only available in the following regions: East US, West US 2, South Central US, US Gov Arizona, US Gov Virginia. See [Isolated Compute](https://docs.microsoft.com/azure/synapse-analytics/spark/apache-spark-pool-configurations#isolated-compute) for more information.
+
+* `dynamic_executor_allocation_enabled` - (Optional) Indicates whether Dynamic Executor Allocation is enabled or not. Defaults to `false`.
+  
 * `library_requirement` - (Optional)  A `library_requirement` block as defined below.
+
+* `session_level_packages_enabled` - (Optional) Indicates whether session level packages are enabled or not. Defaults to `false`.
+
+* `spark_config` - (Optional)  A `spark_config` block as defined below.
 
 * `spark_log_folder` - (Optional) The default folder where Spark logs will be written. Defaults to `/logs`.
 
 * `spark_events_folder` - (Optional) The Spark events folder. Defaults to `/events`.
 
-* `spark_version` - (Optional) The Apache Spark version. Possible value is `2.4`. Defaults to `2.4`.
+* `spark_version` - (Optional) The Apache Spark version. Possible values are `2.4` and `3.1` and `3.2`. Defaults to `2.4`.
 
 * `tags` - (Optional) A mapping of tags which should be assigned to the Synapse Spark Pool.
 
@@ -113,6 +145,14 @@ An `library_requirement` block supports the following:
 
 * `filename` - (Required) The name of the library requirements file.
 
+---
+
+An `spark_config` block supports the following:
+
+* `content` - (Required) The contents of a spark configuration.
+
+* `filename` - (Required) The name of the file where the spark configuration `content` will be stored.
+
 ## Attributes Reference
 
 In addition to the Arguments listed above - the following Attributes are exported: 
@@ -121,7 +161,7 @@ In addition to the Arguments listed above - the following Attributes are exporte
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Synapse Spark Pool.
 * `read` - (Defaults to 5 minutes) Used when retrieving the Synapse Spark Pool.

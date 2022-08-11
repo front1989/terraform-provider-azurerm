@@ -13,22 +13,22 @@ Manages a Metric Alert within Azure Monitor.
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "main" {
+resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_storage_account" "to_monitor" {
   name                     = "examplestorageaccount"
-  resource_group_name      = azurerm_resource_group.main.name
-  location                 = azurerm_resource_group.main.location
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
 resource "azurerm_monitor_action_group" "main" {
   name                = "example-actiongroup"
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = azurerm_resource_group.example.name
   short_name          = "exampleact"
 
   webhook_receiver {
@@ -39,7 +39,7 @@ resource "azurerm_monitor_action_group" "main" {
 
 resource "azurerm_monitor_metric_alert" "example" {
   name                = "example-metricalert"
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = azurerm_resource_group.example.name
   scopes              = [azurerm_storage_account.to_monitor.id]
   description         = "Action will be triggered when Transactions count is greater than 50."
 
@@ -146,7 +146,7 @@ A `application_insights_web_test_location_availability_criteria` block supports 
 A `dimension` block supports the following:
 
 * `name` - (Required) One of the dimension names.
-* `operator` - (Required) The dimension operator. Possible values are `Include` and `Exclude`.
+* `operator` - (Required) The dimension operator. Possible values are `Include`, `Exclude` and `StartsWith`.
 * `values` - (Required) The list of dimension values.
 
 ## Attributes Reference
@@ -157,7 +157,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Metric Alert.
 * `update` - (Defaults to 30 minutes) Used when updating the Metric Alert.
@@ -169,5 +169,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 Metric Alerts can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_monitor_metric_alert.main /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-resources/providers/microsoft.insights/metricalerts/example-metricalert
+terraform import azurerm_monitor_metric_alert.main /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-resources/providers/Microsoft.Insights/metricAlerts/example-metricalert
 ```

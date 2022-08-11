@@ -6,7 +6,7 @@ description: |-
   Manages a log analytics Data Export Rule.
 ---
 
-# azurerm_log_analytics_data_export
+# azurerm_log_analytics_data_export_rule
 
 Manages a Log Analytics Data Export Rule.
 
@@ -40,6 +40,7 @@ resource "azurerm_log_analytics_data_export_rule" "example" {
   workspace_resource_id   = azurerm_log_analytics_workspace.example.id
   destination_resource_id = azurerm_storage_account.example.id
   table_names             = ["Heartbeat"]
+  enabled                 = true
 }
 ```
 
@@ -57,7 +58,7 @@ The following arguments are supported:
 
 * `table_names` - (Required) A list of table names to export to the destination resource, for example: `["Heartbeat", "SecurityEvent"]`.
 
-* `enabled` - (Optional) Is this Log Analytics Data Export Rule when enabled? Possible values include `true` or `false`. Defaults to `false`.
+* `enabled` - (Optional) Is this Log Analytics Data Export Rule enabled? Possible values include `true` or `false`. Defaults to `false`.
 
 ## Attributes Reference
 
@@ -69,7 +70,7 @@ In addition to the Arguments listed above - the following Attributes are exporte
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Log Analytics Data Export Rule.
 * `update` - (Defaults to 30 minutes) Used when updating the Log Analytics Data Export Rule.

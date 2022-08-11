@@ -14,13 +14,13 @@ Manages a Event Hubs Consumer Group as a nested resource within an Event Hub.
 
 ```hcl
 resource "azurerm_resource_group" "example" {
-  name     = "resourceGroup1"
-  location = "West US"
+  name     = "example-resources"
+  location = "West Europe"
 }
 
 resource "azurerm_eventhub_namespace" "example" {
   name                = "acceptanceTestEventHubNamespace"
-  location            = "West US"
+  location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   sku                 = "Basic"
   capacity            = 2
@@ -71,7 +71,7 @@ The following attributes are exported:
 
 
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the EventHub Consumer Group.
 * `update` - (Defaults to 30 minutes) Used when updating the EventHub Consumer Group.
@@ -83,5 +83,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 EventHub Consumer Groups can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_eventhub_consumer_group.consumerGroup1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/providers/Microsoft.EventHub/namespaces/namespace1/eventhubs/eventhub1/consumergroups/consumerGroup1
+terraform import azurerm_eventhub_consumer_group.consumerGroup1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/providers/Microsoft.EventHub/namespaces/namespace1/eventhubs/eventhub1/consumerGroups/consumerGroup1
 ```

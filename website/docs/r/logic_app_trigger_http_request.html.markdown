@@ -15,7 +15,7 @@ Manages a HTTP Request Trigger within a Logic App Workflow
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "workflow-resources"
-  location = "East US"
+  location = "West Europe"
 }
 
 resource "azurerm_logic_app_workflow" "example" {
@@ -68,9 +68,11 @@ The following attributes are exported:
 
 * `id` - The ID of the HTTP Request Trigger within the Logic App Workflow.
 
+* `callback_url` - The URL for the workflow trigger
+
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Logic App HTTP Request Trigger.
 * `update` - (Defaults to 30 minutes) Used when updating the Logic App HTTP Request Trigger.

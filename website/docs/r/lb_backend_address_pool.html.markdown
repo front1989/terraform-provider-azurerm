@@ -17,7 +17,7 @@ Manages a Load Balancer Backend Address Pool.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "LoadBalancerRG"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_public_ip" "example" {
@@ -52,6 +52,20 @@ The following arguments are supported:
   
 * `loadbalancer_id` - (Required) The ID of the Load Balancer in which to create the Backend Address Pool.
 
+* `tunnel_interface` - (Optional) One or more `tunnel_interface` blocks as defined below.
+
+---
+
+The `tunnel_interface` block supports the following:
+
+* `identifier` - (Required) The unique identifier of this Gateway Lodbalancer Tunnel Interface.
+
+* `type` - (Required) The traffic type of this Gateway Lodbalancer Tunnel Interface. Possible values are `Internal` and `External`.
+
+* `protocol` - (Required) The protocol used for this Gateway Lodbalancer Tunnel Interface. Possible values are `Native` and `VXLAN`.
+
+* `port` - (Required) The port number that this Gateway Lodbalancer Tunnel Interface listens to.
+
 ## Attributes Reference
 
 The following attributes are exported:
@@ -62,11 +76,13 @@ The following attributes are exported:
 
 * `load_balancing_rules` - The Load Balancing Rules associated with this Backend Address Pool.
 
+* `inbound_nat_rules` - An array of the Load Balancing Inbound NAT Rules associated with this Backend Address Pool.
+
 * `outbound_rules` - An array of the Load Balancing Outbound Rules associated with this Backend Address Pool.
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Load Balancer Backend Address Pool.
 * `update` - (Defaults to 30 minutes) Used when updating the Load Balancer Backend Address Pool.

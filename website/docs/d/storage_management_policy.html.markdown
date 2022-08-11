@@ -19,7 +19,7 @@ data "azurerm_storage_account" "example" {
 }
 
 data "azurerm_storage_management_policy" "example" {
-  storage_account_id = azurerm_storage_account.example.id
+  storage_account_id = data.azurerm_storage_account.example.id
 }
 ```
 
@@ -49,6 +49,7 @@ The following arguments are supported:
 
 * `prefix_match` - An array of strings for prefixes to be matched.
 * `blob_types` - An array of predefined values. Valid options are `blockBlob` and `appendBlob`.
+* `match_blob_index_tag` - A `match_blob_index_tag` block as defined below. The block defines the blob index tag based filtering for blob objects.
 
 ---
 
@@ -56,23 +57,46 @@ The following arguments are supported:
 
 * `base_blob` - A `base_blob` block as documented below.
 * `snapshot` - A `snapshot` block as documented below.
+* `version` - A `version` block as documented below.
 
 ---
 
 `base_blob` supports the following:
 
 * `tier_to_cool_after_days_since_modification_greater_than` - The age in days after last modification to tier blobs to cool storage. Supports blob currently at Hot tier.
+* `tier_to_cool_after_days_since_last_access_time_greater_than` - The age in days after last access time to tier blobs to cool storage. Supports blob currently at Hot tier.
 * `tier_to_archive_after_days_since_modification_greater_than` - The age in days after last modification to tier blobs to archive storage. Supports blob currently at Hot or Cool tier.
+* `tier_to_archive_after_days_since_last_access_time_greater_than` - The age in days after last access time to tier blobs to archive storage. Supports blob currently at Hot or Cool tier.
 * `delete_after_days_since_modification_greater_than` - The age in days after last modification to delete the blob.
+* `delete_after_days_since_last_access_time_greater_than` - The age in days after last access time to delete the blob.
 
 ---
 
 `snapshot` supports the following:
 
-* `delete_after_days_since_creation_greater_than` - The age in days after create to delete the snapshot.
+* `change_tier_to_archive_after_days_since_creation` - The age in days after creation to tier blob snapshot to archive storage.
+* `change_tier_to_cool_after_days_since_creation` - The age in days after creation to tier blob snapshot to cool storage.
+* `delete_after_days_since_creation_greater_than` - The age in days after creation to delete the blob snapshot.
+
+---
+
+`version` supports the following:
+
+* `change_tier_to_archive_after_days_since_creation` - The age in days after creation to tier blob version to archive storage.
+* `change_tier_to_cool_after_days_since_creation` - The age in days after creation to tier blob version to cool storage.
+* `delete_after_days_since_creation` - The age in days after creation to delete the blob version.
+
+---
+
+`match_blob_index_tag` supports the following:
+
+* `name` - The filter tag name used for tag based filtering for blob objects.
+* `operation` - The comparison operator which is used for object comparison and filtering. Possible value is `==`. Defaults to `==`.
+* `value` -  The filter tag value used for tag based filtering for blob objects.
+
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Storage Management Policy.

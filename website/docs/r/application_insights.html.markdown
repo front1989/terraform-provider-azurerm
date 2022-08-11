@@ -34,6 +34,40 @@ output "app_id" {
 }
 ```
 
+## Example Usage - Workspace Mode
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "tf-test"
+  location = "West Europe"
+}
+
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "workspace-test"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
+resource "azurerm_application_insights" "example" {
+  name                = "tf-test-appinsights"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  workspace_id        = azurerm_log_analytics_workspace.example.id
+  application_type    = "web"
+}
+
+output "instrumentation_key" {
+  value = azurerm_application_insights.example.instrumentation_key
+}
+
+output "app_id" {
+  value = azurerm_application_insights.example.app_id
+}
+```
+
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -56,9 +90,19 @@ The following arguments are supported:
 
 * `sampling_percentage` - (Optional) Specifies the percentage of the data produced by the monitored application that is sampled for Application Insights telemetry.
 
-* `disable_ip_masking` - (Optional) By default the real client ip is masked as `0.0.0.0` in the logs. Use this argument to disable masking and log the real client ip. Defaults to `false`.
+* `disable_ip_masking` - (Optional) By default the real client IP is masked as `0.0.0.0` in the logs. Use this argument to disable masking and log the real client IP. Defaults to `false`.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
+
+* `workspace_id` - (Optional) Specifies the id of a log analytics workspace resource. Changing this forces a new resource to be created.
+
+* `local_authentication_disabled` - (Optional) Disable Non-Azure AD based Auth. Defaults to `false`.
+
+* `internet_ingestion_enabled ` - (Optional) Should the Application Insights component support ingestion over the Public Internet? Defaults to `true`.
+
+* `internet_query_enabled` - (Optional) Should the Application Insights component support querying over the Public Internet? Defaults to `true`.
+
+* `force_customer_storage_for_profiler` - (Optional) Should the Application Insights component force users to create their own storage account for profiling? Defaults to `false`.
 
 ## Attributes Reference
 
@@ -68,13 +112,13 @@ The following attributes are exported:
 
 * `app_id` - The App ID associated with this Application Insights component.
 
-* `instrumentation_key` - The Instrumentation Key for this Application Insights component.
+* `instrumentation_key` - The Instrumentation Key for this Application Insights component. (Sensitive)
 
 * `connection_string` - The Connection String for this Application Insights component. (Sensitive)
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Application Insights Component.
 * `update` - (Defaults to 30 minutes) Used when updating the Application Insights Component.
@@ -86,5 +130,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 Application Insights instances can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_application_insights.instance1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/microsoft.insights/components/instance1
+terraform import azurerm_application_insights.instance1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Insights/components/instance1
 ```

@@ -46,9 +46,11 @@ The following arguments are supported:
 
 * `location` - (Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created.
 
-* `service_level` - (Required) The service level of the file system. Valid values include `Premium`, `Standard`, or `Ultra`.
+* `service_level` - (Required) The service level of the file system. Valid values include `Premium`, `Standard`, or `Ultra`. Changing this forces a new resource to be created.
 
 * `size_in_tb` - (Required) Provisioned size of the pool in TB. Value must be between `4` and `500`.
+
+* `qos_type` - (Optional) QoS Type of the pool. Valid values include `Auto` or `Manual`.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
@@ -62,7 +64,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the NetApp Pool.
 * `update` - (Defaults to 30 minutes) Used when updating the NetApp Pool.

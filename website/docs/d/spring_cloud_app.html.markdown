@@ -42,7 +42,7 @@ The following attributes are exported:
 
 * `fqdn` - The Fully Qualified DNS Name.
 
-* `https_only` - Is only https allowed?
+* `https_only` - Is only HTTPS allowed?
 
 * `identity` - An `identity` block as defined below.
 
@@ -51,6 +51,8 @@ The following attributes are exported:
 * `persistent_disk` - A `persistent_disk` block as defined below.
 
 * `url` - The public endpoint of the Spring Cloud Application.
+
+* `tls_enabled` - Is End to End TLS Enabled?
 
 ---
 
@@ -72,6 +74,6 @@ The `persistent_disk` block exports the following:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Spring Cloud Application.

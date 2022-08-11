@@ -22,15 +22,19 @@ data "azurerm_network_service_tags" "example" {
 output "address_prefixes" {
   value = data.azurerm_network_service_tags.example.address_prefixes
 }
+
+output "ipv4_cidrs" {
+  value = data.azurerm_network_service_tags.example.ipv4_cidrs
+}
 ```
 
 ## Arguments Reference
 
 The following arguments are supported:
 
-* `location` - (Required) The Azure Region where the Service Tags exists. This value is not used to filter the results but for specifying the region to request. For filtering by region use `location_filter` instead.  More information can be found here: [Service Tags URL parameters](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/servicetags/list#uri-parameters).
+* `location` - (Required) The Azure Region where the Service Tags exists. This value is not used to filter the results but for specifying the region to request. For filtering by region use `location_filter` instead.  More information can be found here: [Service Tags URL parameters](https://docs.microsoft.com/rest/api/virtualnetwork/servicetags/list#uri-parameters).
 
-* `service` - (Required) The type of the service for which address prefixes will be fetched. Available service tags can be found here: [Available service tags](https://docs.microsoft.com/en-us/azure/virtual-network/service-tags-overview#available-service-tags).
+* `service` - (Required) The type of the service for which address prefixes will be fetched. Available service tags can be found here: [Available service tags](https://docs.microsoft.com/azure/virtual-network/service-tags-overview#available-service-tags).
 
 ---
 
@@ -44,8 +48,12 @@ In addition to the Arguments listed above - the following Attributes are exporte
 
 * `address_prefixes` - List of address prefixes for the service type (and optionally a specific region).
 
+* `ipv4_cidrs` - List of IPv4 addresses for the service type (and optionally a specific region)
+
+* `ipv6_cidrs` - List of IPv6 addresses for the service type (and optionally a specific region)
+
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Service Tags.

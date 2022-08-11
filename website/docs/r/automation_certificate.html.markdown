@@ -14,7 +14,7 @@ Manages an Automation Certificate.
 
 ```hcl
 resource "azurerm_resource_group" "example" {
-  name     = "resourceGroup1"
+  name     = "example-resources"
   location = "West Europe"
 }
 
@@ -33,6 +33,7 @@ resource "azurerm_automation_certificate" "example" {
 
   description = "This is an example certificate"
   base64      = filebase64("certificate.pfx")
+  exportable  = true
 }
 ```
 
@@ -46,9 +47,11 @@ The following arguments are supported:
 
 * `automation_account_name` - (Required) The name of the automation account in which the Certificate is created. Changing this forces a new resource to be created.
 
-* `base64` - (Required) Base64 encoded value of the certificate.
+* `base64` - (Required) Base64 encoded value of the certificate. Changing this forces a new resource to be created.
 
 * `description` -  (Optional) The description of this Automation Certificate.
+
+* `exportable` - (Optional) The is exportable flag of the certificate.
 
 ## Attributes Reference
 
@@ -56,13 +59,11 @@ The following attributes are exported:
 
 * `id` - The Automation Certificate ID.
 
-* `is_exportable` - The is exportable flag of the certificate.
-
 * `thumbprint` - The thumbprint for the certificate.
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Automation Certificate.
 * `update` - (Defaults to 30 minutes) Used when updating the Automation Certificate.

@@ -27,13 +27,13 @@ resource "azurerm_eventhub_namespace" "primary" {
 
 resource "azurerm_eventhub_namespace" "secondary" {
   name                = "eventhub-secondary"
-  location            = "West US"
+  location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   sku                 = "Standard"
 }
 
 resource "azurerm_eventhub_namespace_disaster_recovery_config" "example" {
-  name                 = "replicate-evenhub"
+  name                 = "replicate-eventhub"
   resource_group_name  = azurerm_resource_group.example.name
   namespace_name       = azurerm_eventhub_namespace.primary.name
   partner_namespace_id = azurerm_eventhub_namespace.secondary.id
@@ -52,8 +52,6 @@ The following arguments are supported:
 
 * `partner_namespace_id` - (Optional) The ID of the EventHub Namespace to replicate to.
 
-* `alternate_name` - (Optional) An alternate name to use when the Disaster Recovery Config's name is the same as the replicated namespace's name.
-
 * `wait_for_replication` - (Optional) Should the resource wait for replication upon creation? Defaults to `false`.
 
 ## Attributes Reference
@@ -66,7 +64,7 @@ The following attributes are exported:
 
 
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the EventHub Namespace Disaster Recovery Config.
 * `update` - (Defaults to 30 minutes) Used when updating the EventHub Namespace Disaster Recovery Config.

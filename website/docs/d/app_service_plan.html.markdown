@@ -10,6 +10,8 @@ description: |-
 
 Use this data source to access information about an existing App Service Plan (formerly known as a `Server Farm`).
 
+!> **Note:** The `azurerm_app_service_plan` data source is deprecated in version 3.0 of the AzureRM provider and will be removed in version 4.0. Please use the [`azurerm_service_plan`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/service_plan) data source instead.
+
 ## Example Usage
 
 ```hcl
@@ -54,6 +56,8 @@ output "app_service_plan_id" {
 
 * `maximum_number_of_workers` - The maximum number of workers supported with the App Service Plan's sku.
 
+* `zone_redundant` - App Service Plan perform availability zone balancing.
+
 ---
 
 A `sku` block supports the following:
@@ -66,6 +70,6 @@ A `sku` block supports the following:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the App Service Plan.

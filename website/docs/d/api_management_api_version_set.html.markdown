@@ -40,7 +40,7 @@ output "api_management_api_version_set_id" {
 
 * `display_name` - The display name of this API Version Set.
 
-* `versioning_schema` - The value that determines where the API Version identifer will be located in a HTTP request.
+* `versioning_schema` - The value that determines where the API Version identifier will be located in a HTTP request.
 
 * `version_header_name` - The name of the Header which should be read from Inbound Requests which defines the API Version.
 
@@ -48,6 +48,6 @@ output "api_management_api_version_set_id" {
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the API Version Set.

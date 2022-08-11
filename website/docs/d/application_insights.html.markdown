@@ -30,17 +30,18 @@ output "application_insights_instrumentation_key" {
 
 ## Attributes Reference
 
-* `id` - The ID of the Virtual Machine.
+* `id` - The ID of the Application Insights component.
 * `app_id` - The App ID associated with this Application Insights component.
 * `application_type` - The type of the component.
 * `instrumentation_key` - The instrumentation key of the Application Insights component.
 * `connection_string` - The connection string of the Application Insights component. (Sensitive)
 * `location` - The Azure location where the component exists.
 * `retention_in_days` - The retention period in days.
+* `workspace_id` - The id of the associated Log Analytics workspace
 * `tags` - Tags applied to the component.
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Application Insights component.

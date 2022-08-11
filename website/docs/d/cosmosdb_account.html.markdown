@@ -19,7 +19,7 @@ data "azurerm_cosmosdb_account" "example" {
 }
 
 output "cosmosdb_account_endpoint" {
-  value = data.azurerm_cosmosdb_account.jobs.endpoint
+  value = data.azurerm_cosmosdb_account.example.endpoint
 }
 ```
 
@@ -51,7 +51,7 @@ The following attributes are exported:
 
 * `ip_range_filter` - The current IP Filter for this CosmosDB account
 
-* `enable_free_tier` - If Free Tier pricing option is enabled for this CosmosDB Account.
+* `enable_free_tier` - If Free Tier pricing option is enabled for this CosmosDB Account. You can have up to one free tier Azure Cosmos DB account per Azure subscription.
 
 * `enable_automatic_failover` - If automatic failover is enabled for this CosmosDB Account.
 
@@ -61,14 +61,13 @@ The following attributes are exported:
 
 * `virtual_network_rule` - Subnets that are allowed to access this CosmosDB account.
 
-* `enable_multiple_write_locations` - If multi-master is enabled for this Cosmos DB account.
+* `enable_multiple_write_locations` - If multiple write locations are enabled for this Cosmos DB account.
 
 `consistency_policy` The current consistency Settings for this CosmosDB account with the following properties:
 
 * `consistency_level` - The Consistency Level used by this CosmosDB Account.
 * `max_interval_in_seconds` - The amount of staleness (in seconds) tolerated when the consistency level is Bounded Staleness.
 * `max_staleness_prefix` - The number of stale requests tolerated when the consistency level is Bounded Staleness.
-
 
 `geo_location` The geographic locations data is replicated to with the following properties:
 
@@ -86,16 +85,16 @@ The following attributes are exported:
 
 * `write_endpoints` - A list of write endpoints available for this CosmosDB account.
 
-* `primary_key` - The Primary master key for the CosmosDB Account.
+* `primary_key` - The Primary key for the CosmosDB Account.
 
-* `secondary_key` - The Secondary master key for the CosmosDB Account.
+* `secondary_key` - The Secondary key for the CosmosDB Account.
 
-* `primary_readonly_key` - The Primary read-only master Key for the CosmosDB Account.
+* `primary_readonly_key` - The Primary read-only Key for the CosmosDB Account.
 
-* `secondary_readonly_key` - The Secondary read-only master key for the CosmosDB Account.
+* `secondary_readonly_key` - The Secondary read-only key for the CosmosDB Account.
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the CosmosDB Account.

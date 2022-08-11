@@ -15,7 +15,7 @@ Manages an Entity within a Table in an Azure Storage Account.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "azureexample"
-  location = "westus"
+  location = "West Europe"
 }
 
 resource "azurerm_storage_account" "example" {
@@ -28,7 +28,6 @@ resource "azurerm_storage_account" "example" {
 
 resource "azurerm_storage_table" "example" {
   name                 = "myexampletable"
-  resource_group_name  = azurerm_resource_group.example.name
   storage_account_name = azurerm_storage_account.example.name
 }
 
@@ -70,7 +69,7 @@ The following attributes are exported in addition to the arguments listed above:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Storage Table Entity.
 * `update` - (Defaults to 30 minutes) Used when updating the Storage Table Entity.

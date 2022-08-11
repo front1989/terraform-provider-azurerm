@@ -95,6 +95,39 @@ resource "azurerm_private_endpoint" "example" {
 }
 ```
 
+Using a Private Link Service Alias with existing resources:
+
+```hcl
+data "azurerm_resource_group" "example" {
+  name = "example-resources"
+}
+
+data "azurerm_virtual_network" "vnet" {
+  name                = "example-network"
+  resource_group_name = data.azurerm_resource_group.example.name
+}
+
+data "azurerm_subnet" "subnet" {
+  name                 = "default"
+  virtual_network_name = data.azurerm_virtual_network.vnet.name
+  resource_group_name  = data.azurerm_resource_group.example.name
+}
+
+resource "azurerm_private_endpoint" "example" {
+  name                = "example-endpoint"
+  location            = data.azurerm_resource_group.example.location
+  resource_group_name = data.azurerm_resource_group.example.name
+  subnet_id           = data.azurerm_subnet.subnet.id
+
+  private_service_connection {
+    name                              = "example-privateserviceconnection"
+    private_connection_resource_alias = "example-privatelinkservice.d20286c8-4ea5-11eb-9584-8f53157226c6.centralus.azure.privatelinkservice"
+    is_manual_connection              = true
+    request_message                   = "PL"
+  }
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -131,7 +164,9 @@ A `private_service_connection` supports the following:
 
 -> **NOTE:** If you are trying to connect the Private Endpoint to a remote resource without having the correct RBAC permissions on the remote resource set this value to `true`.
 
-* `private_connection_resource_id` - (Required) The ID of the Private Link Enabled Remote Resource which this Private Endpoint should be connected to. Changing this forces a new resource to be created.
+* `private_connection_resource_id` - (Optional) The ID of the Private Link Enabled Remote Resource which this Private Endpoint should be connected to. One of `private_connection_resource_id` or `private_connection_resource_alias` must be specified. Changing this forces a new resource to be created. For a web app or function app slot, the parent web app should be used in this field instead of a reference to the slot itself.
+
+* `private_connection_resource_alias` - (Optional) The Service Alias of the Private Link Enabled Remote Resource which this Private Endpoint should be connected to. One of `private_connection_resource_id` or `private_connection_resource_alias` must be specified. Changing this forces a new resource to be created.
 
 * `subresource_names` - (Optional) A list of subresource names which the Private Endpoint is able to connect to. `subresource_names` corresponds to `group_id`. Changing this forces a new resource to be created.
 
@@ -140,14 +175,17 @@ A `private_service_connection` supports the following:
 | Resource Type                 | SubResource Name | Secondary SubResource Name |
 | ----------------------------- | ---------------- | -------------------------- |
 | Data Lake File System Gen2    | dfs              | dfs_secondary              |
-| Sql Database / Data Warehouse | sqlServer        |                            |
+| SQL Database / Data Warehouse | sqlServer        |                            |
+| SQL Managed Instance          | managedInstance  |                            |
 | Storage Account               | blob             | blob_secondary             |
 | Storage Account               | file             | file_secondary             |
 | Storage Account               | queue            | queue_secondary            |
 | Storage Account               | table            | table_secondary            |
 | Storage Account               | web              | web_secondary              |
+| Web App / Function App        | sites            |                            |
+| Web App / Function App Slots  | sites-<slotName> |                            |
 
-See the product [documentation](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-overview#dns-configuration) for more information.
+See the product [documentation](https://docs.microsoft.com/azure/private-link/private-endpoint-overview#private-link-resource) for more information.
 
 * `request_message` - (Optional) A message passed to the owner of the remote resource when the private endpoint attempts to establish the connection to the remote resource. The request message can be a maximum of `140` characters in length. Only valid if `is_manual_connection` is set to `true`.
 
@@ -156,6 +194,14 @@ See the product [documentation](https://docs.microsoft.com/en-us/azure/private-l
 The following attributes are exported:
 
 * `id` - The ID of the Private Endpoint.
+
+---
+
+A `network_interface` block exports:
+
+* `id` - The ID of the network interface associated with the `private_endpoint`.
+
+* `name` - The name of the network interface associated with the `private_endpoint`.
 
 ---
 
@@ -211,14 +257,16 @@ A `record_sets` block exports:
 
 ## Example HCL Configurations
 
-* How to connect a `Private Endpoint` to a [Cosmos MongoDB](https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/private-endpoint/cosmos-db)
-* How to connect a `Private Endpoint` to a [PostgreSQL Server](https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/private-endpoint/postgresql)
-* How to connect a `Private Endpoint` to a [Private Link Service](https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/private-endpoint/private-link-service)
-* How to connect a `Private Endpoint` to a [Private DNS Group](https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/private-endpoint/private-dns-group)
+* How to connect a `Private Endpoint` to a [Application Gateway](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/private-endpoint/application-gateway)
+* How to connect a `Private Endpoint` to a [Cosmos MongoDB](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/private-endpoint/cosmos-db)
+* How to connect a `Private Endpoint` to a [PostgreSQL Server](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/private-endpoint/postgresql)
+* How to connect a `Private Endpoint` to a [Private Link Service](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/private-endpoint/private-link-service)
+* How to connect a `Private Endpoint` to a [Private DNS Group](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/private-endpoint/private-dns-group)
+* How to connect a `Private Endpoint` to a [Databricks Workspace](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/private-endpoint/databricks)
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 60 minutes) Used when creating the Private Endpoint.
 * `update` - (Defaults to 60 minutes) Used when updating the Private Endpoint.

@@ -47,7 +47,7 @@ The following arguments are supported:
 
 * `container_access_type` - (Optional) The Access Level configured for this Container. Possible values are `blob`, `container` or `private`. Defaults to `private`.
 
-* `metadata` - (Optional) A mapping of MetaData for this Container.
+* `metadata` - (Optional) A mapping of MetaData for this Container. All metadata keys should be lowercase.
 
 ## Attributes Reference
 
@@ -63,7 +63,7 @@ The following attributes are exported in addition to the arguments listed above:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Storage Container.
 * `update` - (Defaults to 30 minutes) Used when updating the Storage Container.

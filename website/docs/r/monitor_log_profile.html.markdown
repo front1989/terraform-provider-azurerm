@@ -8,7 +8,7 @@ description: |-
 
 # azurerm_monitor_log_profile
 
-Manages a [Log Profile](https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/monitoring-overview-activity-logs#export-the-activity-log-with-a-log-profile). A Log Profile configures how Activity Logs are exported.
+Manages a [Log Profile](https://docs.microsoft.com/azure/monitoring-and-diagnostics/monitoring-overview-activity-logs#export-the-activity-log-with-a-log-profile). A Log Profile configures how Activity Logs are exported.
 
 -> **NOTE:** It's only possible to configure one Log Profile per Subscription. If you are trying to create more than one Log Profile, an error with `StatusCode=409` will occur.
 
@@ -17,7 +17,7 @@ Manages a [Log Profile](https://docs.microsoft.com/en-us/azure/monitoring-and-di
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "logprofiletest-rg"
-  location = "eastus"
+  location = "West Europe"
 }
 
 resource "azurerm_storage_account" "example" {
@@ -94,7 +94,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Log Profile.
 * `update` - (Defaults to 30 minutes) Used when updating the Log Profile.
@@ -106,5 +106,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 A Log Profile can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_monitor_log_profile.example /subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/test
+terraform import azurerm_monitor_log_profile.example /subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Insights/logProfiles/test
 ```

@@ -19,7 +19,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "Southeast Asia"
+  location = "West Europe"
 }
 
 data "azurerm_client_config" "current" {
@@ -39,15 +39,15 @@ resource "azurerm_key_vault" "example" {
   access_policy {
     tenant_id               = data.azurerm_client_config.current.tenant_id
     object_id               = data.azurerm_client_config.current.object_id
-    secret_permissions      = ["set"]
-    certificate_permissions = ["create", "delete", "get", "update"]
+    secret_permissions      = ["Set"]
+    certificate_permissions = ["Create", "Delete", "Get", "Update"]
   }
 
   access_policy {
     tenant_id               = data.azurerm_client_config.current.tenant_id
     object_id               = data.azuread_service_principal.example.object_id
-    secret_permissions      = ["get", "list"]
-    certificate_permissions = ["get", "list"]
+    secret_permissions      = ["Get", "List"]
+    certificate_permissions = ["Get", "List"]
   }
 }
 
@@ -121,7 +121,9 @@ The following arguments are supported:
 
 * `service_name` - (Required) Specifies the name of the Spring Cloud Service resource. Changing this forces a new resource to be created.
 
-* `key_vault_certificate_id` - (Required) Specifies the ID of the Key Vault Certificate resource. Changing this forces a new resource to be created.
+* `key_vault_certificate_id` - (Optional) Specifies the ID of the Key Vault Certificate resource. Changing this forces a new resource to be created.
+
+* `certificate_content` - (Optional) The content of uploaded certificate. Changing this forces a new resource to be created.
 
 ## Attributes Reference
 
@@ -129,9 +131,11 @@ The following attributes are exported:
 
 * `id` - The ID of the Spring Cloud Certificate.
 
+* `thumbprint` - The thumbprint of the Spring Cloud certificate.
+
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Spring Cloud Certificate.
 * `read` - (Defaults to 5 minutes) Used when retrieving the Spring Cloud Certificate.

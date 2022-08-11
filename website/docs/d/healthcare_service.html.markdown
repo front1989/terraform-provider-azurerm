@@ -40,7 +40,8 @@ The following attributes are exported:
 
 * `kind` - The type of the service.
 * `authentication_configuration` - An `authentication_configuration` block as defined below.
-* `cosmosdb_offer_throughput` - The provisioned throughput for the backing database.
+* `cosmosdb_throughput` - The provisioned throughput for the backing database.
+* `cosmosdb_key_vault_key_versionless_id` - The versionless Key Vault Key ID for CMK encryption of the backing database.
 * `cors_configuration` - A `cors_configuration` block as defined below.
 * `tags` - A mapping of tags to assign to the resource.
 
@@ -63,6 +64,6 @@ A `cors_configuration` block exports the following:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Healthcare Service.

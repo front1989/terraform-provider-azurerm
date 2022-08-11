@@ -44,7 +44,6 @@ resource "azurerm_hdinsight_hadoop_cluster" "example" {
   }
 
   gateway {
-    enabled  = true
     username = "acctestusrgw"
     password = "TerrAform123!"
   }
@@ -98,6 +97,8 @@ The following arguments are supported:
 
 * `storage_account` - (Required) One or more `storage_account` block as defined below.
 
+* `network` - (Optional) A `network` block as defined below.
+
 * `storage_account_gen2` - (Required) A `storage_account_gen2` block as defined below.
 
 * `tier` - (Required) Specifies the Tier which should be used for this HDInsight Hadoop Cluster. Possible values are `Standard` or `Premium`. Changing this forces a new resource to be created.
@@ -113,6 +114,8 @@ The following arguments are supported:
 * `metastores` - (Optional) A `metastores` block as defined below.
 
 * `monitor` - (Optional) A `monitor` block as defined below.
+  
+* `security_profile` - (Optional) A `security_profile` block as defined below.
 
 ---
 
@@ -123,8 +126,6 @@ A `component_version` block supports the following:
 ---
 
 A `gateway` block supports the following:
-
-* `enabled` - (Optional/ **Deprecated) Is the Ambari portal enabled? The HDInsight API doesn't support disabling gateway anymore.
 
 * `password` - (Required) The password used for the Ambari Portal.
 
@@ -166,6 +167,16 @@ A `roles` block supports the following:
 
 ---
 
+A `network` block supports the following:
+
+* `connection_direction` - (Optional) The direction of the resource provider connection. Possible values include `Inbound` or `Outbound`. Defaults to `Inbound`. Changing this forces a new resource to be created.
+
+-> **NOTE:** To enabled the private link the `connection_direction` must be set to `Outbound`.
+
+* `private_link_enabled` - (Optional) Is the private link enabled? Possible values include `True` or `False`. Defaults to `False`. Changing this forces a new resource to be created.
+
+---
+
 A `storage_account` block supports the following:
 
 * `is_default` - (Required) Is this the Default Storage Account for the HDInsight Hadoop Cluster? Changing this forces a new resource to be created.
@@ -177,6 +188,8 @@ A `storage_account` block supports the following:
 * `storage_container_id` - (Required) The ID of the Storage Container. Changing this forces a new resource to be created.
 
 -> **NOTE:** This can be obtained from the `id` of the `azurerm_storage_container` resource.
+
+* `storage_resource_id` - (Optional) The ID of the Storage Account. Changing this forces a new resource to be created.
 
 ---
 
@@ -202,8 +215,6 @@ A `worker_node` block supports the following:
 
 * `vm_size` - (Required) The Size of the Virtual Machine which should be used as the Worker Nodes. Changing this forces a new resource to be created.
 
-* `min_instance_count` - (Optional / **Deprecated** ) The minimum number of instances which should be run for the Worker Nodes. Changing this forces a new resource to be created.
-
 * `password` - (Optional) The Password associated with the local administrator for the Worker Nodes. Changing this forces a new resource to be created.
 
 -> **NOTE:** If specified, this password must be at least 10 characters in length and must contain at least one digit, one uppercase and one lower case letter, one non-alphanumeric character (except characters ' " ` \).
@@ -217,6 +228,8 @@ A `worker_node` block supports the following:
 * `target_instance_count` - (Optional) The number of instances which should be run for the Worker Nodes.
 
 * `virtual_network_id` - (Optional) The ID of the Virtual Network where the Worker Nodes should be provisioned within. Changing this forces a new resource to be created.
+
+* `autoscale` - (Optional) A `autoscale` block as defined below.
 
 ---
 
@@ -254,7 +267,33 @@ A `install_script_action` block supports the following:
 
 * `uri` - (Required) The URI pointing to the script to run during the installation of the edge node. Changing this forces a new resource to be created.
 
---- 
+* `parameters` - (Optional) The parameters for the script.
+
+---
+
+A `https_endpints` block supports the following:
+
+* `access_modes` - (Optional) A list of access modes for the application.
+
+* `destination_port` - (Optional) The destination port to connect to.
+
+* `disable_gateway_auth` - (Optional) The value indicates whether the gateway authentication is enabled or not.
+
+* `private_ip_address` - (Optional) The private ip address of the endpoint.
+
+* `sub_domain_suffix` - (Optional) The application's subdomain suffix.
+
+---
+
+A `uninstall_script_actions` block supports the following:
+
+* `name` - (Required) The name of the uninstall script action. Changing this forces a new resource to be created.
+
+* `uri` - (Required) The URI pointing to the script to run during the installation of the edge node. Changing this forces a new resource to be created.
+
+* `parameters` - (Optional) The parameters for the script.
+
+---
 
 A `metastores` block supports the following:
 
@@ -309,6 +348,60 @@ A `monitor` block supports the following:
 
 * `primary_key` - (Required) The Operations Management Suite (OMS) workspace key.
 
+---
+
+An `autoscale` block supports the following:
+
+* `capacity` - (Optional) A `capacity` block as defined below.
+
+* `recurrence` - (Optional) A `recurrence` block as defined below.
+
+-> **NOTE:** Either a `capacity` or `recurrence` block must be specified - but not both.
+
+---
+
+A `capacity` block supports the following:
+
+* `max_instance_count` - (Required) The maximum number of worker nodes to autoscale to based on the cluster's activity.
+
+* `min_instance_count` - (Required) The minimum number of worker nodes to autoscale to based on the cluster's activity.
+
+---
+
+A `recurrence` block supports the following:
+
+* `schedule` - (Required) A list of `schedule` blocks as defined below.
+
+* `timezone` - (Required) The time zone for the autoscale schedule times.
+
+---
+
+A `schedule` block supports the following:
+
+* `days` - (Required) The days of the week to perform autoscale.
+
+* `target_instance_count` - (Required) The number of worker nodes to autoscale at the specified time.
+
+* `time` - (Required) The time of day to perform the autoscale in 24hour format.
+
+---
+
+A `security_profile` block supports the following:
+
+* `aadds_resource_id` - (Required) The resource ID of the Azure Active Directory Domain Service. Changing this forces a new resource to be created.
+
+* `domain_name` - (Required) The name of the Azure Active Directory Domain. Changing this forces a new resource to be created.
+
+* `domain_username` - (Required) The username of the Azure Active Directory Domain. Changing this forces a new resource to be created.
+
+* `domain_user_password` - (Required) The user password of the Azure Active Directory Domain. Changing this forces a new resource to be created.
+
+* `ldaps_urls` - (Required) A list of the LDAPS URLs to communicate with the Azure Active Directory. Changing this forces a new resource to be created.
+
+* `msi_resource_id` - (Required) The User Assigned Identity for the HDInsight Cluster. Changing this forces a new resource to be created.
+
+* `cluster_users_group_dns` - (Optional) A list of the distinguished names for the cluster user groups. Changing this forces a new resource to be created.
+
 ## Attributes Reference
 
 The following attributes are exported:
@@ -323,7 +416,7 @@ The following attributes are exported:
 
 
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 60 minutes) Used when creating the Hadoop HDInsight Cluster.
 * `update` - (Defaults to 60 minutes) Used when updating the Hadoop HDInsight Cluster.

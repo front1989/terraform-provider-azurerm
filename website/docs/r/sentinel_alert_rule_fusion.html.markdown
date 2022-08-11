@@ -22,12 +22,25 @@ resource "azurerm_log_analytics_workspace" "example" {
   name                = "example-workspace"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
-  sku                 = "pergb2018"
+  sku                 = "PerGB2018"
+}
+
+resource "azurerm_log_analytics_solution" "example" {
+  solution_name         = "SecurityInsights"
+  location              = azurerm_resource_group.example.location
+  resource_group_name   = azurerm_resource_group.example.name
+  workspace_resource_id = azurerm_log_analytics_workspace.example.id
+  workspace_name        = azurerm_log_analytics_workspace.example.name
+
+  plan {
+    publisher = "Microsoft"
+    product   = "OMSGallery/SecurityInsights"
+  }
 }
 
 resource "azurerm_sentinel_alert_rule_fusion" "example" {
   name                       = "example-fusion-alert-rule"
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
+  log_analytics_workspace_id = azurerm_log_analytics_solution.example.workspace_resource_id
   alert_rule_template_guid   = "f71aba3d-28fb-450b-b192-4e76a83015c8"
 }
 ```
@@ -52,7 +65,7 @@ In addition to the Arguments listed above - the following Attributes are exporte
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Sentinel Fusion Alert Rule.
 * `read` - (Defaults to 5 minutes) Used when retrieving the Sentinel Fusion Alert Rule.

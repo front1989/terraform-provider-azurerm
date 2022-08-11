@@ -43,6 +43,8 @@ The following attributes are exported:
 
 * `id` - The ID of the Key Vault Key.
 
+* `curve` - The EC Curve name of this Key Vault Key.
+
 * `e` - The RSA public exponent of this Key Vault Key.
 
 * `key_type` - Specifies the Key Type of this Key Vault Key
@@ -53,15 +55,27 @@ The following attributes are exported:
 
 * `n` - The RSA modulus of this Key Vault Key.
 
+* `public_key_pem` - The PEM encoded public key of this Key Vault Key.
+
+* `public_key_openssh` - The OpenSSH encoded public key of this Key Vault Key.
+
+* `resource_id` - The (Versioned) ID for this Key Vault Key. This property points to a specific version of a Key Vault Key, as such using this won't auto-rotate values if used in other Azure Services.
+
+* `resource_versionless_id` - The Versionless ID of the Key Vault Key. This property allows other Azure Services (that support it) to auto-rotate their value when the Key Vault Key is updated.
+
 * `tags` - A mapping of tags assigned to this Key Vault Key.
 
 * `version` - The current version of the Key Vault Key.
 
 * `versionless_id` - The Base ID of the Key Vault Key.
 
+* `x` - The EC X component of this Key Vault Key.
+
+* `y` - The EC Y component of this Key Vault Key.
+
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Key Vault Key.

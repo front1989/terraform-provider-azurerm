@@ -31,6 +31,8 @@ output "postgresql_server_id" {
 
 ## Attributes Reference
 
+* `id` - The ID of the PostgreSQL Server.
+
 * `location` - The location of the Resource Group in which the PostgreSQL Server exists.
 
 * `fqdn` - The fully qualified domain name of the PostgreSQL Server.
@@ -57,6 +59,6 @@ An `identity` block exports the following:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the PostgreSQL Azure Database Server.

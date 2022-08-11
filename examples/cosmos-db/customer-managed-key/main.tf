@@ -27,11 +27,11 @@ resource "azurerm_key_vault" "example" {
     object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
-      "list",
-      "create",
-      "delete",
-      "get",
-      "update",
+      "List",
+      "Create",
+      "Delete",
+      "Get",
+      "Update",
     ]
 
   }
@@ -41,9 +41,9 @@ resource "azurerm_key_vault" "example" {
     object_id = data.azuread_service_principal.cosmosdb.id
 
     key_permissions = [
-      "get",
-      "unwrapKey",
-      "wrapKey",
+      "Get",
+      "UnwrapKey",
+      "WrapKey",
     ]
   }
 }
@@ -71,11 +71,10 @@ resource "azurerm_cosmosdb_account" "example" {
   key_vault_key_id    = azurerm_key_vault_key.example.id
 
   consistency_policy {
-    consistency_level       = "Strong"
+    consistency_level = "Strong"
   }
 
   geo_location {
-    prefix            = "${var.prefix}-customid"
     location          = azurerm_resource_group.example.location
     failover_priority = 0
   }

@@ -75,6 +75,10 @@ resource "azurerm_kusto_iothub_data_connection" "example" {
   consumer_group            = azurerm_iothub_consumer_group.example.name
   shared_access_policy_name = azurerm_iothub_shared_access_policy.example.name
   event_system_properties   = ["message-id", "sequence-number", "to"]
+
+  table_name        = "my-table"
+  mapping_rule_name = "my-table-mapping"
+  data_format       = "JSON"
 }
 ```
 
@@ -100,6 +104,14 @@ The following arguments are supported:
 
 * `event_system_properties` - (Optional) Specifies the System Properties that each IoT Hub message should contain. Changing this forces a new resource to be created.
 
+* `table_name` - (Optional) Specifies the target table name used for the message ingestion. Table must exist before resource is created.
+
+* `mapping_rule_name` - (Optional) Specifies the mapping rule used for the message ingestion. Mapping rule must exist before resource is created.
+
+* `data_format` - (Optional) Specifies the data format of the IoTHub messages. Allowed values: `APACHEAVRO`, `AVRO`, `CSV`, `JSON`, `MULTIJSON`, `ORC`, `PARQUET`, `PSV`, `RAW`, `SCSV`, `SINGLEJSON`, `SOHSV`, `TSV`, `TSVE`, `TXT` and `W3CLOGFILE`.
+
+* `database_routing_type` - (Optional) Indication for database routing information from the data connection, by default only database routing information is allowed. Allowed values: `Single`, `Multi`.
+
 ## Attributes Reference
 
 The following attributes are exported:
@@ -108,7 +120,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 60 minutes) Used when creating the Kusto IotHub Data Connection.
 * `read` - (Defaults to 5 minutes) Used when retrieving the Kusto IotHub Data Connection.

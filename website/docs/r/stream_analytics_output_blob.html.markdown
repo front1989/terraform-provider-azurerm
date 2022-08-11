@@ -13,8 +13,9 @@ Manages a Stream Analytics Output to Blob Storage.
 ## Example Usage
 
 ```hcl
-data "azurerm_resource_group" "example" {
-  name = "example-resources"
+resource "azurerm_resource_group" "example" {
+  name     = "rg-example"
+  location = "West Europe"
 }
 
 data "azurerm_stream_analytics_job" "example" {
@@ -24,8 +25,8 @@ data "azurerm_stream_analytics_job" "example" {
 
 resource "azurerm_storage_account" "example" {
   name                     = "examplesa"
-  resource_group_name      = data.azurerm_resource_group.example.name
-  location                 = data.azurerm_resource_group.example.location
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
@@ -71,19 +72,27 @@ The following arguments are supported:
 
 * `storage_account_name` - (Required) The name of the Storage Account.
 
-* `storage_account_key` - (Required) The Access Key which should be used to connect to this Storage Account.
-
 * `storage_container_name` - (Required) The name of the Container within the Storage Account.
 
 * `time_format` - (Required) The time format. Wherever `{time}` appears in `path_pattern`, the value of this property is used as the time format instead.
 
 * `serialization` - (Required) A `serialization` block as defined below.
 
+* `authentication_mode` - (Optional) The authentication mode for the Stream Output. Possible values are `Msi` and `ConnectionString`. Defaults to `ConnectionString`.
+
+* `batch_max_wait_time` - (Optional) The maximum wait time per batch in `hh:mm:ss` e.g. `00:02:00` for two minutes.
+
+* `batch_min_rows` - (Optional) The minimum number of rows per batch (must be between `0` and `10000`).
+
+* `storage_account_key` - (Optional) The Access Key which should be used to connect to this Storage Account.
+
 ---
 
 A `serialization` block supports the following:
 
-* `type` - (Required) The serialization format used for outgoing data streams. Possible values are `Avro`, `Csv` and `Json`.
+* `type` - (Required) The serialization format used for outgoing data streams. Possible values are `Avro`, `Csv`, `Json` and `Parquet`.
+
+-> **NOTE:** `batch_max_wait_time` and `batch_min_rows` are required when `type` is set to `Parquet`
 
 * `encoding` - (Optional) The encoding of the incoming data in the case of input and the encoding of outgoing data in the case of output. It currently can only be set to `UTF8`.
 
@@ -105,7 +114,7 @@ The following attributes are exported in addition to the arguments listed above:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Stream Analytics Output Blob Storage.
 * `update` - (Defaults to 30 minutes) Used when updating the Stream Analytics Output Blob Storage.

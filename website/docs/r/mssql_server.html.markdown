@@ -19,15 +19,7 @@ Manages a Microsoft SQL Azure Database Server.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "database-rg"
-  location = "West US"
-}
-
-resource "azurerm_storage_account" "example" {
-  name                     = "examplesa"
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+  location = "West Europe"
 }
 
 resource "azurerm_mssql_server" "example" {
@@ -42,13 +34,6 @@ resource "azurerm_mssql_server" "example" {
   azuread_administrator {
     login_username = "AzureAD Admin"
     object_id      = "00000000-0000-0000-0000-000000000000"
-  }
-
-  extended_auditing_policy {
-    storage_endpoint                        = azurerm_storage_account.example.primary_blob_endpoint
-    storage_account_access_key              = azurerm_storage_account.example.primary_access_key
-    storage_account_access_key_is_secondary = true
-    retention_in_days                       = 6
   }
 
   tags = {
@@ -68,13 +53,11 @@ The following arguments are supported:
 
 * `version` - (Required) The version for the new server. Valid values are: 2.0 (for v11 server) and 12.0 (for v12 server).
 
-* `administrator_login` - (Required) The administrator login name for the new server. Changing this forces a new resource to be created.
+* `administrator_login` - (Optional) The administrator login name for the new server. Required unless `azuread_authentication_only` in the `azuread_administrator` block is `true`. When omitted, Azure will generate a default username which cannot be subsequently changed. Changing this forces a new resource to be created.
 
-* `administrator_login_password` - (Required) The password associated with the `administrator_login` user. Needs to comply with Azure's [Password Policy](https://msdn.microsoft.com/library/ms161959.aspx)
+* `administrator_login_password` - (Optional) The password associated with the `administrator_login` user. Needs to comply with Azure's [Password Policy](https://msdn.microsoft.com/library/ms161959.aspx). Required unless `azuread_authentication_only` in the `azuread_administrator` block is `true`.
 
 * `azuread_administrator` - (Optional) An `azuread_administrator` block as defined below.
-
-* `extended_auditing_policy` - (Optional) A `extended_auditing_policy` block as defined below.
 
 * `connection_policy` - (Optional) The connection policy the server will use. Possible values are `Default`, `Proxy`, and `Redirect`. Defaults to `Default`.
 
@@ -84,7 +67,11 @@ The following arguments are supported:
 
 ~> **NOTE:** Once `minimum_tls_version` is set it is not possible to remove this setting and must be given a valid value for any further updates to the resource.
 
-* `public_network_access_enabled` - (Optional) Whether or not public network access is allowed for this server. Defaults to `true`.
+* `public_network_access_enabled` - (Optional) Whether public network access is allowed for this server. Defaults to `true`.
+
+* `outbound_network_restriction_enabled` - (Optional) Whether outbound network traffic is restricted for this server. Defaults to `false`.
+
+* `primary_user_assigned_identity_id` - (Optional) Specifies the primary user managed identity id. Required if `type` is `UserAssigned` and should be combined with `user_assigned_identity_ids`.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
@@ -92,9 +79,25 @@ The following arguments are supported:
 
 An `identity` block supports the following:
 
-* `type` - (Required) Specifies the identity type of the Microsoft SQL Server. At this time the only allowed value is `SystemAssigned`.
+* `type` - (Required) Specifies the type of Managed Service Identity that should be configured on this API Management Service. Possible values are `SystemAssigned`, `UserAssigned`.
 
-~> **NOTE:** The assigned `principal_id` and `tenant_id` can be retrieved after the identity `type` has been set to `SystemAssigned` and the Microsoft SQL Server has been created. More details are available below.
+* `identity_ids` - (Optional) Specifies a list of User Assigned Managed Identity IDs to be assigned to this API Management Service.
+
+~> **NOTE:** This is required when `type` is set to `UserAssigned`
+
+~> **NOTE:** When `type` is set to `SystemAssigned`, the assigned `principal_id` and `tenant_id` can be retrieved after the Microsoft SQL Server has been created. More details are available below.
+
+---
+
+An `azuread_administrator` block supports the following:
+
+* `login_username` - (Required)  The login username of the Azure AD Administrator of this SQL Server.
+
+* `object_id` - (Required) The object id of the Azure AD Administrator of this SQL Server.
+
+* `tenant_id` - (Optional) The tenant id of the Azure AD Administrator of this SQL Server.
+
+* `azuread_authentication_only` - (Optional) Specifies whether only AD Users and administrators (like `azuread_administrator.0.login_username`) can be used to login, or also local database users (like `administrator_login`). When `true`, the `administrator_login` and `administrator_login_password` properties can be omitted.
 
 ## Attributes Reference
 
@@ -116,31 +119,9 @@ The following attributes are exported:
 
 -> You can access the Principal ID via `azurerm_mssql_server.example.identity.0.principal_id` and the Tenant ID via `azurerm_mssql_server.example.identity.0.tenant_id`
 
----
-
-An `azuread_administrator` block supports the following:
-
-* `login_username` - (Required)  The login username of the Azure AD Administrator of this SQL Server.
-
-* `object_id` - (Required) The object id of the Azure AD Administrator of this SQL Server.
-
-* `tenant_id` - (Optional) The tenant id of the Azure AD Administrator of this SQL Server.
-
----
-
-An `extended_auditing_policy` block supports the following:
-
-* `storage_account_access_key` - (Required)  Specifies the access key to use for the auditing storage account.
-
-* `storage_endpoint` - (Required) Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net).
-
-* `storage_account_access_key_is_secondary` - (Optional) Specifies whether `storage_account_access_key` value is the storage's secondary key.
-
-* `retention_in_days` - (Optional) Specifies the number of days to retain logs for in the storage account.
-
 ### Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 60 minutes) Used when creating the Microsoft SQL Server.
 * `update` - (Defaults to 60 minutes) Used when updating the Microsoft SQL Server.

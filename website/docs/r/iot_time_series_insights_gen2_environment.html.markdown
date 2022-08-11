@@ -15,7 +15,7 @@ Manages an Azure IoT Time Series Insights Gen2 Environment.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "northeurope"
+  location = "West Europe"
 }
 resource "azurerm_storage_account" "storage" {
   name                     = "example"
@@ -25,14 +25,12 @@ resource "azurerm_storage_account" "storage" {
   account_replication_type = "LRS"
 }
 resource "azurerm_iot_time_series_insights_gen2_environment" "example" {
-  name                = "example"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-  sku_name            = "L1"
-  data_retention_time = "P30D"
-  property {
-    ids = ["id"]
-  }
+  name                           = "example"
+  location                       = azurerm_resource_group.example.location
+  resource_group_name            = azurerm_resource_group.example.name
+  sku_name                       = "L1"
+  warm_store_data_retention_time = "P30D"
+  id_properties                  = ["id"]
   storage {
     name = azurerm_storage_account.storage.name
     key  = azurerm_storage_account.storage.primary_access_key
@@ -52,13 +50,11 @@ The following arguments are supported:
 
 * `sku_name` - (Required) Specifies the SKU Name for this IoT Time Series Insights Gen2 Environment. Currently it supports only `L1`. For gen2, capacity cannot be specified.
 
-* `data_retention_time` - (Required) Specifies the ISO8601 timespan specifying the minimum number of days the environment's events will be available for query. Changing this forces a new resource to be created.
-
-* `property` - (Required) A `property` block as defined below.
+* `warm_store_data_retention_time` - (Required) Specifies the ISO8601 timespan specifying the minimum number of days the environment's events will be available for query. Changing this forces a new resource to be created.
 
 * `storage` - (Required) A `storage` block as defined below.
 
-* `id_properties` - (Required) A list of property ids for the Azure IoT Time Series Insights Gen2 Environment
+* `id_properties` - (Required) A list of property ids for the Azure IoT Time Series Insights Gen2 Environment. Changing this forces a new resource to be created. 
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
@@ -79,7 +75,7 @@ A `storage` block supports the following:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the IoT Time Series Insights Gen2 Environment.
 * `update` - (Defaults to 30 minutes) Used when updating the IoT Time Series Insights Gen2 Environment.

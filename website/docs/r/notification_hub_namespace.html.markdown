@@ -16,7 +16,7 @@ Manages a Notification Hub Namespace.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "notificationhub-resources"
-  location = "Australia East"
+  location = "West Europe"
 }
 
 resource "azurerm_notification_hub_namespace" "example" {
@@ -56,7 +56,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Notification Hub Namespace.
 * `update` - (Defaults to 30 minutes) Used when updating the Notification Hub Namespace.
@@ -68,5 +68,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 Notification Hub Namespaces can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_notification_hub_namespace.namespace1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}
+terraform import azurerm_notification_hub_namespace.namespace1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.NotificationHubs/namespaces/namespace1
 ```

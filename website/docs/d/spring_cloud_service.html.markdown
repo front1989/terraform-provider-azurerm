@@ -23,7 +23,7 @@ data "azurerm_spring_cloud_service" "example" {
 }
 
 output "spring_cloud_service_id" {
-  value = "${data.azurerm_spring_cloud_service.example.id}"
+  value = data.azurerm_spring_cloud_service.example.id
 }
 ```
 
@@ -46,6 +46,8 @@ The following attributes are exported:
 * `location` - The location of Spring Cloud Service.
 
 * `outbound_public_ip_addresses` - A list of the outbound Public IP Addresses used by this Spring Cloud Service.
+
+* `required_network_traffic_rules` - A list of `required_network_traffic_rules` blocks as defined below.
 
 * `tags` - A mapping of tags assigned to Spring Cloud Service.
 
@@ -87,9 +89,9 @@ The `repository` block contains the following:
 
 The `http_basic_auth` block supports the following:
 
-* `username` - The username used to access the Http Basic Authentication Git repository server.
+* `username` - The username used to access the HTTP Basic Authentication Git repository server.
 
-* `password` - The password used to access the Http Basic Authentication Git repository server.
+* `password` - The password used to access the HTTP Basic Authentication Git repository server.
 
 ---
 
@@ -103,8 +105,22 @@ The `ssh_auth` block supports the following:
 
 * `strict_host_key_checking_enabled` - Indicates whether the Config Server instance will fail to start if the host_key does not match.
 
+---
+
+The `required_network_traffic_rules` supports the following:
+
+* `direction` - The direction of required traffic. Possible values are `Inbound`, `Outbound`.
+
+* `fqdns` - The FQDN list of required traffic.
+
+* `ip_addresses` - The IP list of required traffic.
+
+* `port` - The port of required traffic.
+
+* `protocol` - The protocol of required traffic.
+
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Spring Cloud Service.

@@ -52,13 +52,17 @@ The following arguments are supported:
 
 * `iothub_ids` - (Required) Specifies the IoT Hub resource IDs to which this Iot Security Solution is applied.
 
+* `additional_workspace` - (Optional) A `additional_workspace` block as defined below.
+
+* `disabled_data_sources` - (Optional) A list of disabled data sources for the Iot Security Solution. Possible value is `TwinData`.
+
 * `enabled` - (Optional) Is the Iot Security Solution enabled? Defaults to `true`.
 
 * `events_to_export` - (Optional) A list of data which is to exported to analytic workspace. Valid values include `RawEvents`.
 
 * `log_analytics_workspace_id` - (Optional) Specifies the Log Analytics Workspace ID to which the security data will be sent.
 
-* `log_unmasked_ips_enabled` - (Optional) Should ip addressed be unmasked in the log? Defaults to `false`.
+* `log_unmasked_ips_enabled` - (Optional) Should IP addressed be unmasked in the log? Defaults to `false`.
 
 * `recommendations_enabled` - (Optional) A `recommendations_enabled` block of options to enable or disable as defined below.
 
@@ -67,6 +71,14 @@ The following arguments are supported:
 * `query_subscription_ids` - (Optional) A list of subscription Ids on which the user defined resources query should be executed.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
+
+---
+
+The `additional_workspace` block supports the following:
+
+* `data_types` - (Required) A list of data types which sent to workspace. Possible values are `Alerts` and `RawEvents`.
+
+* `workspace_id` - (Required) The resource ID of the Log Analytics Workspace.
 
 ---
 
@@ -112,7 +124,7 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Iot Security Solution.
 * `update` - (Defaults to 30 minutes) Used when updating the Iot Security Solution.

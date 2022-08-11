@@ -21,7 +21,7 @@ resource "azurerm_resource_group" "example" {
 resource "azurerm_monitor_action_group" "example" {
   name                = "example-action-group"
   resource_group_name = azurerm_resource_group.example.name
-  short_name          = "exampleactiongroup"
+  short_name          = "example"
 }
 
 resource "azurerm_monitor_action_rule_action_group" "example" {
@@ -124,7 +124,7 @@ The `monitor_service` block supports the following:
 
 * `operator` - (Required) The operator for a given condition. Possible values are `Equals` and `NotEquals`.
 
-* `values` - (Required) A list of values to match for a given condition. Possible values are `ActivityLog Administrative`, `ActivityLog Autoscale`, `ActivityLog Policy`, `ActivityLog Recommendation`, `ActivityLog Security`, `Application Insights`, `Azure Backup`, `Data Box Edge`, `Data Box Gateway`, `Health Platform`, `Log Analytics`, `Platform`, and `Resource Health`.
+* `values` - (Required) A list of values to match for a given condition. Possible values are `ActivityLog Administrative`, `ActivityLog Autoscale`, `ActivityLog Policy`, `ActivityLog Recommendation`, `ActivityLog Security`, `Application Insights`, `Azure Backup`, `Azure Stack Edge`, `Azure Stack Hub`, `Custom`, `Data Box Gateway`, `Health Platform`, `Log Alerts V2`, `Log Analytics`, `Platform`, `Resource Health`, `Smart Detector` and `VM Insights - Health`.
 
 ---
 
@@ -152,7 +152,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Monitor Action Rule.
 * `read` - (Defaults to 5 minutes) Used when retrieving the Monitor Action Rule.

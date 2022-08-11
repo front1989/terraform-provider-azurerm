@@ -34,14 +34,14 @@ resource "azurerm_key_vault" "example" {
     object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
-      "create",
-      "get",
-      "purge",
-      "recover"
+      "Create",
+      "Get",
+      "Purge",
+      "Recover"
     ]
 
     secret_permissions = [
-      "set",
+      "Set",
     ]
   }
 }
@@ -75,7 +75,7 @@ The following arguments are supported:
 
 * `key_size` - (Optional) Specifies the Size of the RSA key to create in bytes. For example, 1024 or 2048. *Note*: This field is required if `key_type` is `RSA` or `RSA-HSM`. Changing this forces a new resource to be created.
 
-* `curve` - (Optional) Specifies the curve to use when creating an `EC` key. Possible values are `P-256`, `P-384`, `P-521`, and `SECP256K1`. This field will be required in a future release if `key_type` is `EC` or `EC-HSM`. The API will default to `P-256` if nothing is specified. Changing this forces a new resource to be created.
+* `curve` - (Optional) Specifies the curve to use when creating an `EC` key. Possible values are `P-256`, `P-256K`, `P-384`, and `P-521`. This field will be required in a future release if `key_type` is `EC` or `EC-HSM`. The API will default to `P-256` if nothing is specified. Changing this forces a new resource to be created.
 
 * `key_opts` - (Required) A list of JSON web key operations. Possible values include: `decrypt`, `encrypt`, `sign`, `unwrapKey`, `verify` and `wrapKey`. Please note these values are case sensitive.
 
@@ -90,18 +90,22 @@ The following arguments are supported:
 The following attributes are exported:
 
 * `id` - The Key Vault Key ID.
+* `resource_id` - The (Versioned) ID for this Key Vault Key. This property points to a specific version of a Key Vault Key, as such using this won't auto-rotate values if used in other Azure Services.
+* `resource_versionless_id` - The Versionless ID of the Key Vault Key. This property allows other Azure Services (that support it) to auto-rotate their value when the Key Vault Key is updated.
 * `version` - The current version of the Key Vault Key.
 * `versionless_id` - The Base ID of the Key Vault Key.
 * `n` - The RSA modulus of this Key Vault Key.
 * `e` - The RSA public exponent of this Key Vault Key.
 * `x` - The EC X component of this Key Vault Key.
 * `y` - The EC Y component of this Key Vault Key.
+* `public_key_pem` - The PEM encoded public key of this Key Vault Key.
+* `public_key_openssh` - The OpenSSH encoded public key of this Key Vault Key.
 
 ## Timeouts
 
 
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Key Vault Key.
 * `update` - (Defaults to 30 minutes) Used when updating the Key Vault Key.

@@ -56,7 +56,7 @@ resource "azurerm_api_management_diagnostic" "example" {
   sampling_percentage       = 5.0
   always_log_errors         = true
   log_client_ip             = true
-  verbosity                 = "Verbose"
+  verbosity                 = "verbose"
   http_correlation_protocol = "W3C"
 
   frontend_request {
@@ -130,6 +130,8 @@ The following arguments are supported:
 
 * `verbosity` - (Optional) Logging verbosity. Possible values are `verbose`, `information` or `error`.
 
+* `operation_name_format` - (Optional) The format of the Operation Name for Application Insights telemetries. Possible values are `Name`, and `Url`. Defaults to `Name`.
+
 ---
 
 A `backend_request`, `backend_response`, `frontend_request` or `frontend_response` block supports the following:
@@ -146,7 +148,7 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the API Management Diagnostic.
 * `update` - (Defaults to 30 minutes) Used when updating the API Management Diagnostic.

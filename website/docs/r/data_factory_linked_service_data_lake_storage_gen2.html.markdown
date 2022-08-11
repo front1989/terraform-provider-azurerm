@@ -17,7 +17,7 @@ Manages a Linked Service (connection) between Data Lake Storage Gen2 and Azure D
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "northeurope"
+  location = "West Europe"
 }
 
 resource "azurerm_data_factory" "example" {
@@ -31,8 +31,7 @@ data "azurerm_client_config" "current" {
 
 resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "example" {
   name                  = "example"
-  resource_group_name   = azurerm_resource_group.example.name
-  data_factory_name     = azurerm_data_factory.example.name
+  data_factory_id       = azurerm_data_factory.example.id
   service_principal_id  = data.azurerm_client_config.current.client_id
   service_principal_key = "exampleKey"
   tenant                = "11111111-1111-1111-1111-111111111111"
@@ -45,11 +44,9 @@ resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "example" 
 The following supported arguments are common across all Azure Data Factory Linked Services:
 
 * `name` - (Required) Specifies the name of the Data Factory Linked Service. Changing this forces a new resource to be created. Must be unique within a data
-  factory. See the [Microsoft documentation](https://docs.microsoft.com/en-us/azure/data-factory/naming-rules) for all restrictions.
+  factory. See the [Microsoft documentation](https://docs.microsoft.com/azure/data-factory/naming-rules) for all restrictions.
 
-* `resource_group_name` - (Required) The name of the resource group in which to create the Data Factory Linked Service. Changing this forces a new resource
-
-* `data_factory_name` - (Required) The Data Factory name in which to associate the Linked Service with. Changing this forces a new resource.
+* `data_factory_id` - (Required) The Data Factory ID in which to associate the Linked Service with. Changing this forces a new resource.
 
 * `description` - (Optional) The description for the Data Factory Linked Service.
 
@@ -65,13 +62,19 @@ The following supported arguments are specific to Data Lake Storage Gen2 Linked 
 
 * `url` - (Required) The endpoint for the Azure Data Lake Storage Gen2 service.
 
-* `use_managed_identity` - (Optional) Whether to use the Data Factory's managed identity to authenticate against the Azure Data Lake Storage Gen2 account. Incompatible with `service_principal_id` and `service_principal_key`  
+~> **NOTE** Users should specify only one of the following three authentication strategies: storage account key, managed identity, service principal.
 
-* `service_principal_id` - (Optional) The service principal id in which to authenticate against the Azure Data Lake Storage Gen2 account. Required if `use_managed_identity` is true.
+* `storage_account_key` - (Optional) The Storage Account Key with which to authenticate against the Azure Data Lake Storage Gen2 account.  Incompatible with `service_principal_id`, `service_principal_key`, `tenant` and `use_managed_identity`.
 
-* `service_principal_key` - (Optional) The service principal key in which to authenticate against the Azure Data Lake Storage Gen2 account.  Required if `use_managed_identity` is true.
+* `use_managed_identity` - (Optional) Whether to use the Data Factory's managed identity to authenticate against the Azure Data Lake Storage Gen2 account. Incompatible with `service_principal_id`, `service_principal_key`, `tenant` and `storage_account_key`.
 
-* `tenant` - (Required) The tenant id or name in which to authenticate against the Azure Data Lake Storage Gen2 account.
+* `service_principal_id` - (Optional) The service principal id with which to authenticate against the Azure Data Lake Storage Gen2 account.  Incompatible with `storage_account_key` and `use_managed_identity`.
+
+* `service_principal_key` - (Optional) The service principal key with which to authenticate against the Azure Data Lake Storage Gen2 account.
+
+* `tenant` - (Optional) The tenant id or name in which the service principal exists to authenticate against the Azure Data Lake Storage Gen2 account.
+
+~> **NOTE** If `service_principal_id` is used, `service_principal_key` and `tenant` are also required.
 
 ## Attributes Reference
 
@@ -81,7 +84,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Data Factory Data Lake Storage Gen2 Linked Service.
 * `update` - (Defaults to 30 minutes) Used when updating the Data Factory Data Lake Storage Gen2 Linked Service.

@@ -20,12 +20,12 @@ At this time you cannot use a Route Table with in-line Routes in conjunction wit
 
 ```hcl
 resource "azurerm_resource_group" "example" {
-  name     = "acceptanceTestResourceGroup1"
-  location = "West US"
+  name     = "example-resources"
+  location = "West Europe"
 }
 
 resource "azurerm_route_table" "example" {
-  name                          = "acceptanceTestSecurityGroup1"
+  name                          = "example-route-table"
   location                      = azurerm_resource_group.example.location
   resource_group_name           = azurerm_resource_group.example.name
   disable_bgp_route_propagation = false
@@ -33,7 +33,7 @@ resource "azurerm_route_table" "example" {
   route {
     name           = "route1"
     address_prefix = "10.1.0.0/16"
-    next_hop_type  = "vnetlocal"
+    next_hop_type  = "VnetLocal"
   }
 
   tags = {
@@ -64,7 +64,7 @@ Elements of `route` support:
 
 * `name` - (Required) The name of the route.
 
-* `address_prefix` - (Required) The destination CIDR to which the route applies, such as 10.1.0.0/16
+* `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as `10.1.0.0/16`) or [Azure Service Tag](https://docs.microsoft.com/azure/virtual-network/service-tags-overview) (such as `ApiManagement`, `AzureBackup` or `AzureMonitor`) format.
 
 * `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are `VirtualNetworkGateway`, `VnetLocal`, `Internet`, `VirtualAppliance` and `None`.
 
@@ -79,7 +79,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Route Table.
 * `update` - (Defaults to 30 minutes) Used when updating the Route Table.

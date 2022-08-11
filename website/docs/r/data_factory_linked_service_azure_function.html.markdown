@@ -8,7 +8,7 @@ description: |-
 
 # azurerm_data_factory_linked_service_azure_function
 
-Manages a Linked Service (connection) between a SFTP Server and Azure Data Factory.
+Manages a Linked Service (connection) between an Azure Function and Azure Data Factory.
 
 ~> **Note:** All arguments including the client secret will be stored in the raw state as plain-text. [Read more about sensitive data in state](/docs/state/sensitive-data.html).
 
@@ -17,7 +17,7 @@ Manages a Linked Service (connection) between a SFTP Server and Azure Data Facto
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "northeurope"
+  location = "West Europe"
 }
 
 data "azurerm_function_app" "example" {
@@ -32,11 +32,10 @@ resource "azurerm_data_factory" "example" {
 }
 
 resource "azurerm_data_factory_linked_service_azure_function" "example" {
-  name                = "example"
-  resource_group_name = azurerm_resource_group.example.name
-  data_factory_name   = azurerm_data_factory.example.name
-  url                 = "https://${data.azurerm_function_app.example.default_hostname}"
-  key                 = "foo"
+  name            = "example"
+  data_factory_id = azurerm_data_factory.example.id
+  url             = "https://${data.azurerm_function_app.example.default_hostname}"
+  key             = "foo"
 
 }
 ```
@@ -46,11 +45,9 @@ resource "azurerm_data_factory_linked_service_azure_function" "example" {
 The following supported arguments are common across all Azure Data Factory Linked Services:
 
 * `name` - (Required) Specifies the name of the Data Factory Linked Service. Changing this forces a new resource to be created. Must be unique within a data
-  factory. See the [Microsoft documentation](https://docs.microsoft.com/en-us/azure/data-factory/naming-rules) for all restrictions.
+  factory. See the [Microsoft documentation](https://docs.microsoft.com/azure/data-factory/naming-rules) for all restrictions.
 
-* `resource_group_name` - (Required) The name of the resource group in which to create the Data Factory Linked Service. Changing this forces a new resource
-
-* `data_factory_name` - (Required) The Data Factory name in which to associate the Linked Service with. Changing this forces a new resource.
+* `data_factory_id` - (Required) The Data Factory ID in which to associate the Linked Service with. Changing this forces a new resource.
 
 * `description` - (Optional) The description for the Data Factory Linked Service.
 
@@ -66,7 +63,19 @@ The following supported arguments are specific to Azure Function Linked Service:
 
 * `url` - (Required) The url of the Azure Function. 
 
-* `key` - (Required) The system key of the Azure Function. 
+* `key` - (Optional) The system key of the Azure Function. Exactly one of either `key` or `key_vault_key` is required
+
+* `key_vault_key` - (Optional) A `key_vault_key` block as defined below. Use this Argument to store the system key of the Azure Function in an existing Key Vault. It needs an existing Key Vault Data Factory Linked Service. Exactly one of either `key` or `key_vault_key` is required.
+
+---
+
+A `key_vault_key` block supports the following:
+
+* `linked_service_name` - (Required) Specifies the name of an existing Key Vault Data Factory Linked Service.
+
+* `secret_name` - (Required) Specifies the secret name in Azure Key Vault that stores the system key of the Azure Function.
+
+---
 
 ## Attributes Reference
 
@@ -76,7 +85,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Data Factory Linked Service.
 * `update` - (Defaults to 30 minutes) Used when updating the Data Factory Linked Service.

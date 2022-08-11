@@ -17,19 +17,118 @@ Manages an Azure Container Registry.
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "rg" {
-  name     = "resourceGroup1"
-  location = "West US"
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "West Europe"
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                     = "containerRegistry1"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  sku                      = "Premium"
-  admin_enabled            = false
-  georeplication_locations = ["East US", "West Europe"]
+  name                = "containerRegistry1"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku                 = "Premium"
+  admin_enabled       = false
+  georeplications {
+    location                = "East US"
+    zone_redundancy_enabled = true
+    tags                    = {}
+  }
+  georeplications {
+    location                = "westeurope"
+    zone_redundancy_enabled = true
+    tags                    = {}
+  }
 }
+```
+
+## Example Usage (Encryption)
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "West Europe"
+}
+
+resource "azurerm_container_registry" "acr" {
+  name                = "containerRegistry1"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku                 = "Premium"
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.example.id
+    ]
+  }
+
+  encryption {
+    enabled            = true
+    key_vault_key_id   = data.azurerm_key_vault_key.example.id
+    identity_client_id = azurerm_user_assigned_identity.example.client_id
+  }
+
+}
+
+resource "azurerm_user_assigned_identity" "example" {
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+
+  name = "registry-uai"
+}
+
+data "azurerm_key_vault_key" "example" {
+  name         = "super-secret"
+  key_vault_id = data.azurerm_key_vault.existing.id
+}
+
+
+
+```
+
+## Example Usage (Attaching a Container Registry to a Kubernetes Cluster)
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "West Europe"
+}
+
+resource "azurerm_container_registry" "example" {
+  name                = "containerRegistry1"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku                 = "Premium"
+}
+
+resource "azurerm_kubernetes_cluster" "example" {
+  name                = "example-aks1"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  dns_prefix          = "exampleaks1"
+
+  default_node_pool {
+    name       = "default"
+    node_count = 1
+    vm_size    = "Standard_D2_v2"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  tags = {
+    Environment = "Production"
+  }
+}
+
+resource "azurerm_role_assignment" "example" {
+  principal_id                     = azurerm_kubernetes_cluster.example.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.example.id
+  skip_service_principal_aad_check = true
+}
+
 ```
 
 ## Argument Reference
@@ -42,29 +141,59 @@ The following arguments are supported:
 
 * `location` - (Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created.
 
+* `sku` - (Required) The SKU name of the container registry. Possible values are  `Basic`, `Standard` and `Premium`.
+
 * `admin_enabled` - (Optional) Specifies whether the admin user is enabled. Defaults to `false`.
-
-* `storage_account_id` - (Required for `Classic` Sku - Forbidden otherwise) The ID of a Storage Account which must be located in the same Azure Region as the Container Registry.  Changing this forces a new resource to be created.
-
-* `sku` - (Optional) The SKU name of the container registry. Possible values are  `Basic`, `Standard` and `Premium`. `Classic` (which was previously `Basic`) is supported only for existing resources.
-
-~> **NOTE:** The `Classic` SKU is Deprecated and will no longer be available for new resources from the end of March 2019.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
-* `georeplication_locations` - (Optional) A list of Azure locations where the container registry should be geo-replicated.
+* `georeplications` - (Optional) A `georeplications` block as documented below.
 
-~> **NOTE:** The `georeplication_locations` is only supported on new resources with the `Premium` SKU.
+~> **NOTE:** The `georeplications` is only supported on new resources with the `Premium` SKU.
 
-~> **NOTE:** The `georeplication_locations` list cannot contain the location where the Container Registry exists.
+~> **NOTE:** The `georeplications` list cannot contain the location where the Container Registry exists.
 
 * `network_rule_set` - (Optional) A `network_rule_set` block as documented below.
+
+* `public_network_access_enabled` - (Optional) Whether public network access is allowed for the container registry. Defaults to `true`.
+
+* `quarantine_policy_enabled` - (Optional) Boolean value that indicates whether quarantine policy is enabled. Defaults to `false`.
 
 * `retention_policy` - (Optional) A `retention_policy` block as documented below.
 
 * `trust_policy` - (Optional) A `trust_policy` block as documented below.
 
-~> **NOTE:** `retention_policy` and `trust_policy` are only supported on resources with the `Premium` SKU.
+* `zone_redundancy_enabled` - (Optional) Whether zone redundancy is enabled for this Container Registry? Changing this forces a new resource to be created. Defaults to `false`.
+
+* `export_policy_enabled` - (Optional) Boolean value that indicates whether export policy is enabled. Defaults to `true`. In order to set it to `false`, make sure the `public_network_access_enabled` is also set to `false`.
+
+  ~> **NOTE:** `quarantine_policy_enabled`, `retention_policy`, `trust_policy`, `export_policy_enabled` and `zone_redundancy_enabled` are only supported on resources with the `Premium` SKU.
+
+* `identity` - (Optional) An `identity` block as defined below.
+
+* `encryption` - (Optional) An `encryption` block as documented below.
+
+* `anonymous_pull_enabled` - (Optional) Whether allows anonymous (unauthenticated) pull access to this Container Registry? Defaults to `false`. This is only supported on resources with the `Standard` or `Premium` SKU.
+
+* `data_endpoint_enabled` - (Optional) Whether to enable dedicated data endpoints for this Container Registry? Defaults to `false`. This is only supported on resources with the `Premium` SKU.
+
+* `network_rule_bypass_option` - (Optional) Whether to allow trusted Azure services to access a network restricted Container Registry? Possible values are `None` and `AzureServices`. Defaults to `AzureServices`.
+
+---
+
+`georeplications` supports the following:
+
+* `location` - (Required) A location where the container registry should be geo-replicated.
+
+* `regional_endpoint_enabled` - (Optional) Whether regional endpoint is enabled for this Container Registry? Defaults to `false`.
+
+* `zone_redundancy_enabled` - (Optional) Whether zone redundancy is enabled for this replication location? Defaults to `false`.
+
+  ~> **NOTE:** Changing the `zone_redundancy_enabled` forces the a underlying replication to be created.
+
+* `tags` - (Optional) A mapping of tags to assign to this replication location.
+
+---
 
 `network_rule_set` supports the following:
 
@@ -78,11 +207,15 @@ The following arguments are supported:
 
 ~> **NOTE:** Azure automatically configures Network Rules - to remove these you'll need to specify an `network_rule_set` block with `default_action` set to `Deny`.
 
+---
+
 `ip_rule` supports the following:
 
 * `action` - (Required) The behaviour for requests matching this rule. At this time the only supported value is `Allow`
 
 * `ip_range` - (Required) The CIDR block from which requests will match the rule.
+
+---
 
 `virtual_network` supports the following:
 
@@ -90,15 +223,41 @@ The following arguments are supported:
 
 * `subnet_id` - (Required) The subnet id from which requests will match the rule.
 
+---
+
 `trust_policy` supports the following:
 
 * `enabled` - (Optional) Boolean value that indicates whether the policy is enabled.
+
+---
 
 `retention_policy` supports the following:
 
 * `days` - (Optional) The number of days to retain an untagged manifest after which it gets purged. Default is `7`.
 
 * `enabled` - (Optional) Boolean value that indicates whether the policy is enabled.
+
+---
+
+An `identity` block supports the following:
+
+* `type` - (Required) Specifies the type of Managed Service Identity that should be configured on this Container Registry. Possible values are `SystemAssigned`, `UserAssigned`, `SystemAssigned, UserAssigned` (to enable both).
+
+* `identity_ids` - (Optional) Specifies a list of User Assigned Managed Identity IDs to be assigned to this Container Registry.
+
+~> **NOTE:** This is required when `type` is set to `UserAssigned` or `SystemAssigned, UserAssigned`.
+
+---
+
+`encryption` supports the following:
+
+* `enabled` - (Optional) Boolean value that indicates whether encryption is enabled.
+
+* `key_vault_key_id` - (Required) The ID of the Key Vault Key.
+
+* `identity_client_id`  - (Required) The client ID of the managed identity associated with the encryption key.
+
+~> **NOTE** The managed identity used in `encryption` also needs to be part of the `identity` block under `identity_ids`
 
 ---
 ## Attributes Reference
@@ -113,9 +272,23 @@ The following attributes are exported:
 
 * `admin_password` - The Password associated with the Container Registry Admin account - if the admin account is enabled.
 
+* `identity` - An `identity` block as defined below.
+
+---
+
+An `identity` block exports the following:
+
+* `principal_id` - The Principal ID associated with this Managed Service Identity.
+
+* `tenant_id` - The Tenant ID associated with this Managed Service Identity.
+
+-> You can access the Principal ID via `azurerm_container_registry.example.identity.0.principal_id` and the Tenant ID via `azurerm_container_registry.example.identity.0.tenant_id`
+
+---
+
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Container Registry.
 * `update` - (Defaults to 30 minutes) Used when updating the Container Registry.

@@ -139,7 +139,7 @@ The following arguments are supported:
 
 * `target_host_name` - (Required) The IP address or fully qualified domain name (FQDN) of the HPC Cache NFS target. Changing this forces a new resource to be created.
 
-* `usage_model` - (Required) The type of usage of the HPC Cache NFS Target.
+* `usage_model` - (Required) The type of usage of the HPC Cache NFS Target. Possible values are: `READ_HEAVY_INFREQ`, `READ_HEAVY_CHECK_180`, `WRITE_WORKLOAD_15`, `WRITE_AROUND`, `WRITE_WORKLOAD_CHECK_30`, `WRITE_WORKLOAD_CHECK_60` and `WRITE_WORKLOAD_CLOUDWS`.
 
 * `namespace_junction` - (Required) Can be specified multiple times to define multiple `namespace_junction`. Each `namespace_juntion` block supports fields documented below.
 
@@ -153,6 +153,8 @@ A `namespace_junction` block supports the following:
 
 * `target_path` - (Optional) The relative subdirectory path from the `nfs_export` to map to the `namespace_path`. Defaults to `""`, in which case the whole `nfs_export` is exported.
 
+* `access_policy_name` - (Optional) The name of the access policy applied to this target. Defaults to `default`.
+
 ## Attributes Reference
 
 The following attributes are exported:
@@ -161,7 +163,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the HPC Cache NFS Target.
 * `read` - (Defaults to 5 minutes) Used when retrieving the HPC Cache NFS Target.
@@ -173,5 +175,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 NFS Target within a HPC Cache can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_hpc_cache_blob_target.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/providers/Microsoft.StorageCache/caches/cache1/storageTargets/target1
+terraform import azurerm_hpc_cache_nfs_target.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/providers/Microsoft.StorageCache/caches/cache1/storageTargets/target1
 ```

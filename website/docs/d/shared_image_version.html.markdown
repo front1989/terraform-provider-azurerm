@@ -32,9 +32,11 @@ The following arguments are supported:
 
 * `image_name` - The name of the Shared Image in which this Version exists.
 
-* `gallery_name` - The name of the Shared Image in which the Shared Image exists.
+* `gallery_name` - The name of the Shared Image Gallery in which the Shared Image exists.
 
 * `resource_group_name` - The name of the Resource Group in which the Shared Image Gallery exists.
+
+* `sort_versions_by_semver` - (Optional) Sort available versions taking SemVer versioning scheme into account. Defaults to `false`.
 
 ## Attributes Reference
 
@@ -68,6 +70,6 @@ The `target_region` block exports the following:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Version of a Shared Image within a Shared Image Gallery.

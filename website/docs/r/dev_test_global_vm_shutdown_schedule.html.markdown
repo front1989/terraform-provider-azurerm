@@ -17,7 +17,7 @@ this resource applies only to standard VMs, not DevTest Lab VMs. To manage autom
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "sample-rg"
-  location = "eastus"
+  location = "West Europe"
 }
 
 resource "azurerm_virtual_network" "example" {
@@ -61,9 +61,9 @@ resource "azurerm_linux_virtual_machine" "example" {
   }
 
   os_disk {
-    name              = "myosdisk-%d"
-    caching           = "ReadWrite"
-    managed_disk_type = "Standard_LRS"
+    name                 = "myosdisk-example"
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
 
   admin_username                  = "testadmin"
@@ -72,7 +72,7 @@ resource "azurerm_linux_virtual_machine" "example" {
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "example" {
-  virtual_machine_id = azurerm_virtual_machine.example.id
+  virtual_machine_id = azurerm_linux_virtual_machine.example.id
   location           = azurerm_resource_group.example.location
   enabled            = true
 
@@ -108,6 +108,8 @@ The following arguments are supported:
 A `notification_settings` - (Required)  - block supports the following:
 
 * `enabled` - (Optional) Whether to enable pre-shutdown notifications. Possible values are `true` and `false`. Defaults to `false`
+
+* `email` - (Optional) E-mail address to which the notification will be sent.
 
 * `time_in_minutes` - (Optional) Time in minutes between 15 and 120 before a shutdown event at which a notification will be sent. Defaults to `30`.
 

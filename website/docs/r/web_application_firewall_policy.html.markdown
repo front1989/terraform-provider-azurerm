@@ -15,7 +15,7 @@ Manages a Azure Web Application Firewall Policy instance.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-rg"
-  location = "West US 2"
+  location = "West Europe"
 }
 
 resource "azurerm_web_application_firewall_policy" "example" {
@@ -164,15 +164,15 @@ The `match_variables` block supports the following:
 
 The `policy_settings` block supports the following:
 
-* `enabled` - (Optional) Describes if the policy is in enabled state or disabled state. Defaults to `Enabled`.
+* `enabled` - (Optional) Describes if the policy is in enabled state or disabled state. Defaults to `true`.
 
-* `mode` - (Optional) Describes if it is in detection mode or prevention mode at the policy level. Defaults to `Prevention`.
+* `mode` - (Optional) Describes if it is in detection mode or prevention mode at the policy level. Valid values are `Detection` and `Prevention`. Defaults to `Prevention`.
 
-* `file_upload_limit_mb` - (Optional) The File Upload Limit in MB. Accepted values are in the range `1` to `750`. Defaults to `100`.
+* `file_upload_limit_in_mb` - (Optional) The File Upload Limit in MB. Accepted values are in the range `1` to `4000`. Defaults to `100`.
 
 * `request_body_check` - (Optional) Is Request Body Inspection enabled? Defaults to `true`.
 
-* `max_request_body_size_in_kb` - (Optional) The Maximum Request Body Size in KB.  Accepted values are in the range `8` to `128`. Defaults to `128`.
+* `max_request_body_size_in_kb` - (Optional) The Maximum Request Body Size in KB.  Accepted values are in the range `8` to `2000`. Defaults to `128`.
 
 ---
 
@@ -180,7 +180,7 @@ The `managed_rules` block supports the following:
 
 * `exclusion` - (Optional) One or more `exclusion` block defined below.
 
-* `managed_rule_set` - (Optional) One or more `managed_rule_set` block defined below.
+* `managed_rule_set` - (Required) One or more `managed_rule_set` block defined below.
 
 ---
 
@@ -198,7 +198,7 @@ The `managed_rule_set` block supports the following:
 
 * `type` - (Optional) The rule set type. Possible values: `Microsoft_BotManagerRuleSet` and `OWASP`.
 
-* `version` - (Required) The rule set version. Possible values: `0.1`, `1.0`, `2.2.9`, `3.0` and `3.1`.
+* `version` - (Required) The rule set version. Possible values: `0.1`, `1.0`, `2.2.9`, `3.0`, `3.1` and `3.2`.
 
 * `rule_group_override` - (Optional) One or more `rule_group_override` block defined below.
 
@@ -208,7 +208,7 @@ The `rule_group_override` block supports the following:
 
 * `rule_group_name` - (Required) The name of the Rule Group
 
-* `disabled_rules` - (Optional) One or more Rule ID's
+* `disabled_rules` - (Optional) One or more Rule IDs
 
 ## Attributes Reference
 
@@ -216,9 +216,13 @@ The following attributes are exported:
 
 * `id` - The ID of the Web Application Firewall Policy.
 
+* `http_listener_ids` - A list of HTTP Listener IDs from an `azurerm_application_gateway`.
+
+* `path_based_rule_ids` - A list of URL Path Map Path Rule IDs from an `azurerm_application_gateway`.
+
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Web Application Firewall Policy.
 * `update` - (Defaults to 30 minutes) Used when updating the Web Application Firewall Policy.

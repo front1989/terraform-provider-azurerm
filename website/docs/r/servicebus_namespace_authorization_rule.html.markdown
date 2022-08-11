@@ -15,7 +15,7 @@ Manages a ServiceBus Namespace authorization Rule within a ServiceBus.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "terraform-servicebus"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_servicebus_namespace" "example" {
@@ -30,9 +30,8 @@ resource "azurerm_servicebus_namespace" "example" {
 }
 
 resource "azurerm_servicebus_namespace_authorization_rule" "example" {
-  name                = "examplerule"
-  namespace_name      = azurerm_servicebus_namespace.example.name
-  resource_group_name = azurerm_resource_group.example.name
+  name         = "examplerule"
+  namespace_id = azurerm_servicebus_namespace.example.id
 
   listen = true
   send   = true
@@ -46,9 +45,7 @@ The following arguments are supported:
 
 * `name` - (Required) Specifies the name of the ServiceBus Namespace Authorization Rule resource. Changing this forces a new resource to be created.
 
-* `namespace_name` - (Required) Specifies the name of the ServiceBus Namespace. Changing this forces a new resource to be created.
-
-* `resource_group_name` - (Required) The name of the resource group in which the ServiceBus Namespace exists. Changing this forces a new resource to be created.
+* `namespace_id` - (Required) Specifies the ID of the ServiceBus Namespace. Changing this forces a new resource to be created.
 
 ~> **NOTE** At least one of the 3 permissions below needs to be set.
 
@@ -72,9 +69,13 @@ The following attributes are exported:
 
 * `secondary_connection_string` - The Secondary Connection String for the ServiceBus Namespace authorization Rule.
 
+* `primary_connection_string_alias` - The alias Primary Connection String for the ServiceBus Namespace, if the namespace is Geo DR paired. 
+
+* `secondary_connection_string_alias` - The alias Secondary Connection String for the ServiceBus Namespace 
+
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the ServiceBus Namespace Authorization Rule.
 * `update` - (Defaults to 30 minutes) Used when updating the ServiceBus Namespace Authorization Rule.

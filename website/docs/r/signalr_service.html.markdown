@@ -15,7 +15,7 @@ Manages an Azure SignalR service.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "terraform-signalr"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_signalr_service" "example" {
@@ -32,9 +32,15 @@ resource "azurerm_signalr_service" "example" {
     allowed_origins = ["http://www.example.com"]
   }
 
-  features {
-    flag  = "ServiceMode"
-    value = "Default"
+  connectivity_logs_enabled = true
+  messaging_logs_enabled    = true
+  service_mode              = "Default"
+
+  upstream_endpoint {
+    category_pattern = ["connections", "messages"]
+    event_pattern    = ["*"]
+    hub_pattern      = ["hub1"]
+    url_template     = "http://foo.com"
   }
 }
 ```
@@ -53,7 +59,17 @@ The following arguments are supported:
 
 * `cors` - (Optional) A `cors` block as documented below.
 
-* `features` - (Optional) A `features` block as documented below.
+* `connectivity_logs_enabled`- (Optional) Specifies if Connectivity Logs are enabled or not. Defaults to `false`.
+
+* `messaging_logs_enabled`- (Optional) Specifies if Messaging Logs are enabled or not. Defaults to `false`.
+
+* `live_trace_enabled`- (Optional) Specifies if Live Trace is enabled or not. Defaults to `false`.
+
+* `service_mode`- (Optional) Specifies the service mode. Possible values are `Classic`, `Default` and `Serverless`. Defaults to `Default`.
+
+* `upstream_endpoint` - (Optional) An `upstream_endpoint` block as documented below. Using this block requires the SignalR service to be Serverless. When creating multiple blocks they will be processed in the order they are defined in.
+
+* `live_trace` - (Optional) A `live_trace` block as defined below.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
@@ -65,17 +81,33 @@ A `cors` block supports the following:
 
 ---
 
-A `features` block supports the following:
+An `upstream_endpoint` block supports the following:
 
-* `flag` - (Required) The kind of Feature. Possible values are `EnableConnectivityLogs`, `EnableMessagingLogs`, and `ServiceMode`.
+* `url_template` - (Required) The upstream URL Template. This can be a url or a template such as `http://host.com/{hub}/api/{category}/{event}`.
 
-* `value` - (Required) A value of a feature flag. Possible values are `Classic`, `Default` and `Serverless`.
+* `category_pattern` - (Optional) The categories to match on, or `*` for all.
+
+* `event_pattern` - (Optional) The events to match on, or `*` for all.
+
+* `hub_pattern` - (Optional) The hubs to match on, or `*` for all.
+
+---
+
+A `live_trace` block supports the following:
+
+* `enabled` - (Optional) Whether the live trace is enabled? Defaults to `true`.
+
+* `messaging_logs_enabled` - (Optional) Whether the log category `MessagingLogs` is enabled? Defaults to `true`
+
+* `connectivity_logs_enabled` - (Optional) Whether the log category `ConnectivityLogs` is enabled? Defaults to `true`
+
+* `http_request_logs_enabled` - (Optional) Whether the log category `HttpRequestLogs` is enabled? Defaults to `true`
 
 ---
 
 A `sku` block supports the following:
 
-* `name` - (Required) Specifies which tier to use. Valid values are `Free_F1` and `Standard_S1`.
+* `name` - (Required) Specifies which tier to use. Valid values are `Free_F1`, `Standard_S1` and `Premium_P1`.
 
 * `capacity` - (Required) Specifies the number of units associated with this SignalR service. Valid values are `1`, `2`, `5`, `10`, `20`, `50` and `100`.
 
@@ -103,7 +135,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the SignalR Service.
 * `update` - (Defaults to 30 minutes) Used when updating the SignalR Service.
@@ -115,5 +147,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 SignalR services can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_signalr_service.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/terraform-signalr/providers/Microsoft.SignalRService/SignalR/tfex-signalr
+terraform import azurerm_signalr_service.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/terraform-signalr/providers/Microsoft.SignalRService/signalR/tfex-signalr
 ```

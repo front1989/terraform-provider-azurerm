@@ -17,7 +17,7 @@ Manages a Linked Service (connection) between a SQL Server and Azure Data Factor
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "northeurope"
+  location = "West Europe"
 }
 
 resource "azurerm_data_factory" "example" {
@@ -27,10 +27,9 @@ resource "azurerm_data_factory" "example" {
 }
 
 resource "azurerm_data_factory_linked_service_sql_server" "example" {
-  name                = "example"
-  resource_group_name = azurerm_resource_group.example.name
-  data_factory_name   = azurerm_data_factory.example.name
-  connection_string   = "Integrated Security=False;Data Source=test;Initial Catalog=test;User ID=test;Password=test"
+  name              = "example"
+  data_factory_id   = azurerm_data_factory.example.id
+  connection_string = "Integrated Security=False;Data Source=test;Initial Catalog=test;User ID=test;Password=test"
 }
 ```
 
@@ -41,7 +40,7 @@ data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "northeurope"
+  location = "West Europe"
 }
 
 resource "azurerm_key_vault" "example" {
@@ -59,16 +58,14 @@ resource "azurerm_data_factory" "example" {
 }
 
 resource "azurerm_data_factory_linked_service_key_vault" "example" {
-  name                = "kvlink"
-  resource_group_name = azurerm_resource_group.example.name
-  data_factory_name   = azurerm_data_factory.example.name
-  key_vault_id        = azurerm_key_vault.example.id
+  name            = "kvlink"
+  data_factory_id = azurerm_data_factory.example.id
+  key_vault_id    = azurerm_key_vault.example.id
 }
 
 resource "azurerm_data_factory_linked_service_sql_server" "example" {
-  name                = "example"
-  resource_group_name = azurerm_resource_group.example.name
-  data_factory_name   = azurerm_data_factory.example.name
+  name            = "example"
+  data_factory_id = azurerm_data_factory.example.id
 
   connection_string = "Integrated Security=False;Data Source=test;Initial Catalog=test;User ID=test;"
   key_vault_password {
@@ -83,13 +80,11 @@ resource "azurerm_data_factory_linked_service_sql_server" "example" {
 The following arguments are supported:
 
 * `name` - (Required) Specifies the name of the Data Factory Linked Service SQL Server. Changing this forces a new resource to be created. Must be unique within a data
-  factory. See the [Microsoft documentation](https://docs.microsoft.com/en-us/azure/data-factory/naming-rules) for all restrictions.
+  factory. See the [Microsoft documentation](https://docs.microsoft.com/azure/data-factory/naming-rules) for all restrictions.
 
-* `resource_group_name` - (Required) The name of the resource group in which to create the Data Factory Linked Service SQL Server. Changing this forces a new resource
+* `data_factory_id` - (Required) The Data Factory ID in which to associate the Linked Service with. Changing this forces a new resource.
 
-* `data_factory_name` - (Required) The Data Factory name in which to associate the Linked Service with. Changing this forces a new resource.
-
-* `connection_string` - (Required) The connection string in which to authenticate with the SQL Server.
+* `connection_string` - (Optional) The connection string in which to authenticate with the SQL Server. Exactly one of either `connection_string` or `key_vault_connection_string` is required.
 
 * `description` - (Optional) The description for the Data Factory Linked Service SQL Server.
 
@@ -101,7 +96,19 @@ The following arguments are supported:
 
 * `additional_properties` - (Optional) A map of additional properties to associate with the Data Factory Linked Service SQL Server.
 
+* `key_vault_connection_string` - (Optional) A `key_vault_connection_string` block as defined below. Use this argument to store SQL Server connection string in an existing Key Vault. It needs an existing Key Vault Data Factory Linked Service. Exactly one of either `connection_string` or `key_vault_connection_string` is required.
+
 * `key_vault_password` - (Optional) A `key_vault_password` block as defined below. Use this argument to store SQL Server password in an existing Key Vault. It needs an existing Key Vault Data Factory Linked Service.
+
+* `user_name` - (Optional) The on-premises Windows authentication user name.
+
+---
+
+A `key_vault_connection_string` block supports the following:
+
+* `linked_service_name` - (Required) Specifies the name of an existing Key Vault Data Factory Linked Service.
+
+* `secret_name` - (Required) Specifies the secret name in Azure Key Vault that stores SQL Server connection string.
 
 ---
 
@@ -121,7 +128,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Data Factory SQL Server Linked Service.
 * `update` - (Defaults to 30 minutes) Used when updating the Data Factory SQL Server Linked Service.

@@ -101,8 +101,12 @@ A `proxy` block supports the following:
 
 A `service_fabric_cluster` block supports the following:
 
-* `client_certificate_thumbprint` - (Required) The client certificate thumbprint for the management endpoint.
+* `client_certificate_thumbprint` - (Optional) The client certificate thumbprint for the management endpoint.
 
+* `client_certificate_id` - (Optional) The client certificate resource id for the management endpoint.
+
+> **Note:** At least one of `client_certificate_thumbprint`, and `client_certificate_id` must be set.
+>
 * `management_endpoints` - (Required) A list of cluster management endpoints.
 
 * `max_partition_resolution_retries` - (Required) The maximum number of retries when attempting resolve the partition.
@@ -137,7 +141,7 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the API Management Backend.
 * `update` - (Defaults to 30 minutes) Used when updating the API Management Backend.

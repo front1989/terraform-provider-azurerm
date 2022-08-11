@@ -15,7 +15,7 @@ Manages an Azure Delimited Text Dataset inside an Azure Data Factory.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "northeurope"
+  location = "West Europe"
 }
 
 resource "azurerm_data_factory" "example" {
@@ -26,16 +26,14 @@ resource "azurerm_data_factory" "example" {
 
 resource "azurerm_data_factory_linked_service_web" "example" {
   name                = "example"
-  resource_group_name = azurerm_resource_group.example.name
-  data_factory_name   = azurerm_data_factory.example.name
+  data_factory_id     = azurerm_data_factory.example.id
   authentication_type = "Anonymous"
   url                 = "https://www.bing.com"
 }
 
 resource "azurerm_data_factory_dataset_delimited_text" "example" {
   name                = "example"
-  resource_group_name = azurerm_resource_group.example.name
-  data_factory_name   = azurerm_data_factory.example.name
+  data_factory_id     = azurerm_data_factory.example.id
   linked_service_name = azurerm_data_factory_linked_service_web.example.name
 
   http_server_location {
@@ -58,11 +56,9 @@ resource "azurerm_data_factory_dataset_delimited_text" "example" {
 
 The following supported arguments are common across all Azure Data Factory Datasets:
 
-* `name` - (Required) Specifies the name of the Data Factory Dataset. Changing this forces a new resource to be created. Must be globally unique. See the [Microsoft documentation](https://docs.microsoft.com/en-us/azure/data-factory/naming-rules) for all restrictions.
+* `name` - (Required) Specifies the name of the Data Factory Dataset. Changing this forces a new resource to be created. Must be globally unique. See the [Microsoft documentation](https://docs.microsoft.com/azure/data-factory/naming-rules) for all restrictions.
 
-* `resource_group_name` - (Required) The name of the resource group in which to create the Data Factory Dataset. Changing this forces a new resource
-
-* `data_factory_name` - (Required) The Data Factory name in which to associate the Dataset with. Changing this forces a new resource.
+* `data_factory_id` - (Required) The Data Factory ID in which to associate the Linked Service with. Changing this forces a new resource.
 
 * `linked_service_name` - (Required) The Data Factory Linked Service name in which to associate the Dataset with.
 
@@ -78,27 +74,29 @@ The following supported arguments are common across all Azure Data Factory Datas
 
 * `additional_properties` - (Optional) A map of additional properties to associate with the Data Factory Dataset.
 
-The following supported locations for a Delimited Text Dataset:
+The following supported locations for a Delimited Text Dataset (exactly one of them must be set):
 
-* `http_server_location` - (Required) A `http_server_location` block as defined below.
+* `azure_blob_fs_location` - (Optional) An `azure_blob_fs_location` block as defined below.
 
-* `azure_blob_storage_location` - (Required) A `azure_blob_storage_location` block as defined below.
+* `azure_blob_storage_location` - (Optional) An `azure_blob_storage_location` block as defined below.
+
+* `http_server_location` - (Optional) A `http_server_location` block as defined below.
 
 The following supported arguments are specific to Delimited Text Dataset:
 
-* `column_delimiter` - (Required) The column delimiter.
+* `column_delimiter` - (Optional) The column delimiter. Defaults to `,`.
 
-* `row_delimiter` - (Required) The row delimiter.
+* `row_delimiter` - (Optional) The row delimiter. Defaults to any of the following values on read: `\r\n`, `\r`, `\n`, and `\n` or `\r\n` on write by mapping data flow and Copy activity respectively.
 
-* `encoding` - (Required) The encoding format for the file.
+* `encoding` - (Optional) The encoding format for the file.
 
-* `quote_character` - (Required) The quote character.
+* `quote_character` - (Optional) The quote character. Defaults to `"`.
 
-* `escape_character` - (Required) The escape character.
+* `escape_character` - (Optional) The escape character. Defaults to `\`.
 
-* `first_row_as_header` - (Required) When used as input, treat the first row of data as headers. When used as output, write the headers into the output as the first row of data.
+* `first_row_as_header` - (Optional) When used as input, treat the first row of data as headers. When used as output, write the headers into the output as the first row of data. Defaults to `false`.
 
-* `null_value` - (Required) The null value string.
+* `null_value` - (Optional) The null value string. Defaults to an empty string.
 
 * `compression_codec` - (Optional) The compression codec used to read/write text files. Valid values are `bzip2`, `gzip`, `deflate`, `ZipDeflate`, `TarGzip`, `Tar`, `snappy`, or `lz4`. Please note these values are case sensitive.
 
@@ -116,6 +114,32 @@ A `schema_column` block supports the following:
 
 ---
 
+An `azure_blob_fs_location` block supports the following:
+
+* `file_system` - (Required) The storage data lake gen2 file system on the Azure Blob Storage Account hosting the file.
+
+* `path` - (Required) The folder path to the file.
+
+* `filename` - (Required) The filename of the file.
+
+---
+
+An `azure_blob_storage_location` block supports the following:
+
+* `container` - (Required) The container on the Azure Blob Storage Account hosting the file.
+
+* `path` - (Optional) The folder path to the file. This can be an empty string.
+
+* `filename` - (Optional) The filename of the file.
+
+* `dynamic_container_enabled` - (Optional) Is the `container` using dynamic expression, function or system variables? Defaults to `false`.
+
+* `dynamic_path_enabled` - (Optional) Is the `path` using dynamic expression, function or system variables? Defaults to `false`.
+
+* `dynamic_filename_enabled` - (Optional) Is the `filename` using dynamic expression, function or system variables? Defaults to `false`.
+
+---
+
 A `http_server_location` block supports the following:
 
 * `relative_url` - (Required) The base URL to the web server hosting the file.
@@ -124,16 +148,9 @@ A `http_server_location` block supports the following:
 
 * `filename` - (Required) The filename of the file on the web server.
 
----
+* `dynamic_path_enabled` - (Optional) Is the `path` using dynamic expression, function or system variables? Defaults to `false`.
 
-A `azure_blob_storage_location` block supports the following:
-
-* `container` - (Required) The container on the Azure Blob Storage Account hosting the file.
-
-* `path` - (Required) The folder path to the file on the web server.
-
-* `filename` - (Required) The filename of the file on the web server.
-
+* `dynamic_filename_enabled` - (Optional) Is the `filename` using dynamic expression, function or system variables? Defaults to `false`.
 
 ## Attributes Reference
 
@@ -143,7 +160,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Data Factory Dataset.
 * `update` - (Defaults to 30 minutes) Used when updating the Data Factory Dataset.
@@ -155,5 +172,5 @@ The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/d
 Data Factory Datasets can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_data_factory_dataset_azure_blob.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example/providers/Microsoft.DataFactory/factories/example/datasets/example
+terraform import azurerm_data_factory_dataset_delimited_text.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example/providers/Microsoft.DataFactory/factories/example/datasets/example
 ```

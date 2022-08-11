@@ -14,8 +14,8 @@ Manages an EventGrid Domain Topic
 
 ```hcl
 resource "azurerm_resource_group" "example" {
-  name     = "resourceGroup1"
-  location = "West US 2"
+  name     = "example-resources"
+  location = "West Europe"
 }
 resource "azurerm_eventgrid_domain" "example" {
   name                = "my-eventgrid-domain"
@@ -50,7 +50,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the EventGrid Domain Topic.
 * `update` - (Defaults to 30 minutes) Used when updating the EventGrid Domain Topic.

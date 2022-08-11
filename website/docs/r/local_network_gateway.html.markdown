@@ -15,7 +15,7 @@ Manages a local network gateway connection over which specific connections can b
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "localNetworkGWTest"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_local_network_gateway" "home" {
@@ -40,17 +40,17 @@ The following arguments are supported:
 * `location` - (Required) The location/region where the local network gateway is
     created. Changing this forces a new resource to be created.
 
-* `address_space` - (Required) The list of string CIDRs representing the
+* `address_space` - (Optional) The list of string CIDRs representing the
     address spaces the gateway exposes.
 
 * `bgp_settings` - (Optional) A `bgp_settings` block as defined below containing the
     Local Network Gateway's BGP speaker settings.
-    
+
 * `gateway_address` - (Optional) The gateway IP address to connect with.
-    
+
 * `gateway_fqdn` - (Optional) The gateway FQDN to connect with.
 
--> **NOTE**: Either `gateway_address` or `gateway_fqdn` should be specified.
+-> **NOTE:** Either `gateway_address` or `gateway_fqdn` should be specified.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
@@ -74,7 +74,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Local Network Gateway.
 * `update` - (Defaults to 30 minutes) Used when updating the Local Network Gateway.

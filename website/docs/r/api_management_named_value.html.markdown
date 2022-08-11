@@ -16,7 +16,7 @@ Manages an API Management Named Value.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_api_management" "example" {
@@ -51,13 +51,23 @@ The following arguments are supported:
 
 * `display_name` - (Required) The display name of this API Management Named Value.
 
-* `value` - (Required) The value of this API Management Named Value.
+* `value` - (Optional) The value of this API Management Named Value.
+
+* `value_from_key_vault` - (Optional) A `value_from_key_vault` block as defined below.
 
 * `secret` - (Optional) Specifies whether the API Management Named Value is secret. Valid values are `true` or `false`. The default value is `false`.
 
 ~> **NOTE:** setting the field `secret` to `true` doesn't make this field sensitive in Terraform, instead it marks the value as secret and encrypts the value in Azure.
 
 * `tags` - (Optional) A list of tags to be applied to the API Management Named Value.
+
+---
+
+A `value_from_key_vault` block supports the following:
+
+* `secret_id` - (Required) The resource ID of the Key Vault Secret.
+
+* `identity_client_id` - (Optional) The client ID of User Assigned Identity, for the API Management Service, which will be used to access the key vault secret. The System Assigned Identity will be used in absence.
 
 ## Attributes Reference
 
@@ -67,7 +77,7 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the API Management Named Value.
 * `update` - (Defaults to 30 minutes) Used when updating the API Management Named Value.

@@ -17,7 +17,7 @@ Manages a Linked Service (connection) between a SFTP Server and Azure Data Facto
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "northeurope"
+  location = "West Europe"
 }
 
 resource "azurerm_data_factory" "example" {
@@ -28,8 +28,7 @@ resource "azurerm_data_factory" "example" {
 
 resource "azurerm_data_factory_linked_service_sftp" "example" {
   name                = "example"
-  resource_group_name = azurerm_resource_group.example.name
-  data_factory_name   = azurerm_data_factory.example.name
+  data_factory_id     = azurerm_data_factory.example.id
   authentication_type = "Basic"
   host                = "http://www.bing.com"
   port                = 22
@@ -43,11 +42,9 @@ resource "azurerm_data_factory_linked_service_sftp" "example" {
 The following supported arguments are common across all Azure Data Factory Linked Services:
 
 * `name` - (Required) Specifies the name of the Data Factory Linked Service. Changing this forces a new resource to be created. Must be unique within a data
-  factory. See the [Microsoft documentation](https://docs.microsoft.com/en-us/azure/data-factory/naming-rules) for all restrictions.
+  factory. See the [Microsoft documentation](https://docs.microsoft.com/azure/data-factory/naming-rules) for all restrictions.
 
-* `resource_group_name` - (Required) The name of the resource group in which to create the Data Factory Linked Service. Changing this forces a new resource
-
-* `data_factory_name` - (Required) The Data Factory name in which to associate the Linked Service with. Changing this forces a new resource.
+* `data_factory_id` - (Required) The Data Factory ID in which to associate the Linked Service with. Changing this forces a new resource.
 
 * `description` - (Optional) The description for the Data Factory Linked Service.
 
@@ -65,11 +62,15 @@ The following supported arguments are specific to SFTP Linked Service:
 
 * `host` - (Required) The SFTP server hostname.
 
-* `port` - (Required) The TCP port number that the SFTP server uses to lsiten for client connection. Default value is 22.
+* `port` - (Required) The TCP port number that the SFTP server uses to listen for client connection. Default value is 22.
 
 * `username` - (Required) The username used to log on to the SFTP server.
 
 * `password` - (Required) Password to logon to the SFTP Server for Basic Authentication.
+
+* `host_key_fingerprint` - (Optional) The host key fingerprint of the SFTP server.
+
+* `skip_host_key_validation` - (Optional) Whether to validate host key fingerprint while connecting. If set to `false`, `host_key_fingerprint` must also be set.
 
 ## Attributes Reference
 
@@ -79,7 +80,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the Data Factory Linked Service.
 * `update` - (Defaults to 30 minutes) Used when updating the Data Factory Linked Service.

@@ -13,15 +13,15 @@ Manages a Kusto (also known as Azure Data Explorer) Attached Database Configurat
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "example" {
   name     = "my-kusto-rg"
-  location = "East US"
+  location = "West Europe"
 }
 
 resource "azurerm_kusto_cluster" "follower_cluster" {
   name                = "cluster1"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
 
   sku {
     name     = "Dev(No SLA)_Standard_D11_v2"
@@ -31,8 +31,8 @@ resource "azurerm_kusto_cluster" "follower_cluster" {
 
 resource "azurerm_kusto_cluster" "followed_cluster" {
   name                = "cluster2"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
 
   sku {
     name     = "Dev(No SLA)_Standard_D11_v2"
@@ -42,19 +42,34 @@ resource "azurerm_kusto_cluster" "followed_cluster" {
 
 resource "azurerm_kusto_database" "followed_database" {
   name                = "my-followed-database"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  cluster_name        = azurerm_kusto_cluster.cluster2.name
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  cluster_name        = azurerm_kusto_cluster.follower_cluster.name
+}
+
+resource "azurerm_kusto_database" "example" {
+  name                = "example"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  cluster_name        = azurerm_kusto_cluster.follower_cluster.name
 }
 
 resource "azurerm_kusto_attached_database_configuration" "example" {
-  name                                 = "configuration1"
-  resource_group_name                  = azurerm_resource_group.rg.name
-  location                             = azurerm_resource_group.rg.location
-  cluster_name                         = azurerm_kusto_cluster.follower_cluster.name
-  cluster_resource_id                  = azurerm_kusto_cluster.followed_cluster.id
-  database_name                        = "*"
-  default_principal_modifications_kind = "None"
+  name                = "configuration1"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  cluster_name        = azurerm_kusto_cluster.follower_cluster.name
+  cluster_resource_id = azurerm_kusto_cluster.followed_cluster.id
+  database_name       = azurerm_kusto_database.example.name
+
+  sharing {
+    external_tables_to_exclude    = ["ExternalTable2"]
+    external_tables_to_include    = ["ExternalTable1"]
+    materialized_views_to_exclude = ["MaterializedViewTable2"]
+    materialized_views_to_include = ["MaterializedViewTable1"]
+    tables_to_exclude             = ["Table2"]
+    tables_to_include             = ["Table1"]
+  }
 }
 ```
 
@@ -76,6 +91,24 @@ The following arguments are supported:
 
 * `default_principal_modification_kind` - (Optional) The default principals modification kind. Valid values are: `None` (default), `Replace` and `Union`.
 
+* `sharing` - (Optional) A `sharing` block as defined below.
+
+---
+
+An `sharing` block exports the following:
+
+* `external_tables_to_exclude` - (Optional) List of external tables exclude from the follower database.
+
+* `external_tables_to_include` - (Optional) List of external tables to include in the follower database.
+
+* `materialized_views_to_exclude` - (Optional) List of materialized views exclude from the follower database.
+
+* `materialized_views_to_include` - (Optional) List of materialized views to include in the follower database.
+
+* `tables_to_exclude` - (Optional) List of tables to exclude from the follower database.
+
+* `tables_to_include` - (Optional) List of tables to include in the follower database.
+
 ## Attributes Reference
 
 The following attributes are exported:
@@ -86,7 +119,7 @@ The following attributes are exported:
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 60 minutes) Used when creating the Kusto Database.
 * `update` - (Defaults to 60 minutes) Used when updating the Kusto Database.

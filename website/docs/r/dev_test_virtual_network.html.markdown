@@ -15,7 +15,7 @@ Manages a Virtual Network within a DevTest Lab.
 ```hcl
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "West US"
+  location = "West Europe"
 }
 
 resource "azurerm_dev_test_lab" "example" {
@@ -84,7 +84,7 @@ A `subnet` block exports the following:
 
 
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the DevTest Virtual Network.
 * `update` - (Defaults to 30 minutes) Used when updating the DevTest Virtual Network.

@@ -17,8 +17,8 @@ Manages an EventGrid Topic
 
 ```hcl
 resource "azurerm_resource_group" "example" {
-  name     = "resourceGroup1"
-  location = "West US 2"
+  name     = "example-resources"
+  location = "West Europe"
 }
 
 resource "azurerm_eventgrid_topic" "example" {
@@ -42,6 +42,8 @@ The following arguments are supported:
 
 * `location` - (Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created.
 
+* `identity` - (Optional) An `identity` block as defined below.
+
 * `input_schema` - (Optional) Specifies the schema in which incoming events will be published to this domain. Allowed values are `CloudEventSchemaV1_0`, `CustomEventSchema`, or `EventGridSchema`. Defaults to `EventGridSchema`. Changing this forces a new resource to be created.
 
 * `input_mapping_fields` - (Optional) A `input_mapping_fields` block as defined below.
@@ -50,9 +52,24 @@ The following arguments are supported:
 
 * `public_network_access_enabled` - (Optional) Whether or not public network access is allowed for this server. Defaults to `true`.
 
+* `local_auth_enabled` - (Optional) Whether local authentication methods is enabled for the EventGrid Topic. Defaults to `true`.
+
 * `inbound_ip_rule` - (Optional) One or more `inbound_ip_rule` blocks as defined below.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
+
+---
+
+A `identity` block supports the following:
+
+* `type` - (Required) Specifies the type of Managed Service Identity that should be configured on this Event Grid Topic. Possible values are `SystemAssigned`, `UserAssigned`.
+
+* `identity_ids` - (Optional) Specifies a list of User Assigned Managed Identity IDs to be assigned to this Event Grid Topic.
+
+~> **NOTE:** This is required when `type` is set to `UserAssigned`
+
+~> **NOTE:** When `type` is set to `SystemAssigned`, The assigned `principal_id` and `tenant_id` can be retrieved after the Event Grid Topic has been created. More details are available below.
+
 
 ---
 
@@ -84,7 +101,7 @@ A `input_mapping_default_values` supports the following:
 
 A `inbound_ip_rule` block supports the following:
 
-* `ip_mask` - (Required) The ip mask (CIDR) to match on.
+* `ip_mask` - (Required) The IP mask (CIDR) to match on.
 
 * `action` - (Optional) The action to take when the rule is matched. Possible values are `Allow`.
 
@@ -100,11 +117,21 @@ The following attributes are exported:
 
 * `secondary_access_key` - The Secondary Shared Access Key associated with the EventGrid Topic.
 
+* `identity` - An `identity` block as defined below.
+
+---
+
+An `identity` block exports the following:
+
+* `principal_id` - The Principal ID associated with this Managed Service Identity.
+
+* `tenant_id` - The Tenant ID associated with this Managed Service Identity.
+
+---
+
 ## Timeouts
 
-
-
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `create` - (Defaults to 30 minutes) Used when creating the EventGrid Topic.
 * `update` - (Defaults to 30 minutes) Used when updating the EventGrid Topic.

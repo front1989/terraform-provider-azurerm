@@ -6,7 +6,7 @@ description: |-
   Gets data contained in an existing Key Vault Certificate.
 ---
 
-# Data Source: azurerm_key_vault_secret_data
+# Data Source: azurerm_key_vault_certificate_data
 
 Use this data source to access data stored in an existing Key Vault Certificate.
 
@@ -29,7 +29,7 @@ data "azurerm_key_vault_certificate_data" "example" {
 }
 
 output "example_pem" {
-  value = data.azurerm_key_vault_certificate.example.pem
+  value = data.azurerm_key_vault_certificate_data.example.pem
 }
 ```
 
@@ -41,7 +41,7 @@ The following arguments are supported:
 
 * `key_vault_id` - (Required) Specifies the ID of the Key Vault instance where the Secret resides, available on the `azurerm_key_vault` Data Source / Resource.
 
-* `version` - (Optional) Specifies the version of the certificate to look up.  (Defaults to latest) 
+* `version` - (Optional) Specifies the version of the certificate to look up.  (Defaults to latest)
 
 ~> **NOTE:** The vault must be in the same subscription as the provider. If the vault is in another subscription, you must create an aliased provider for that subscription.
 
@@ -49,18 +49,22 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-* `hex` - The raw Key Vault Certificate data represented as a hexadecimal string. 
+* `certificates_count` - Amount of certificates in the chain in case Key Vault Certificate is a bundle (e.g. has an intermediate certificate).
 
-* `pem` - The Key Vault Certificate in PEM format. 
+* `hex` - The raw Key Vault Certificate data represented as a hexadecimal string.
 
-* `key` - The Key Vault Certificate Key. 
+* `pem` - The Key Vault Certificate in PEM format.
 
-* `expires` - Expiry date of certificate in RFC3339 format. 
+* `key` - The Key Vault Certificate Key.
+
+* `expires` - Expiry date of certificate in RFC3339 format.
+
+* `not_before` - Not Before date of certificate in RFC3339 format.
 
 * `tags` - A mapping of tags to assign to the resource.
 
 ## Timeouts
 
-The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/docs/configuration/resources.html#timeouts) for certain actions:
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
 
 * `read` - (Defaults to 5 minutes) Used when retrieving the Key Vault Certificate.
