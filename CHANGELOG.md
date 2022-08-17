@@ -2,7 +2,9 @@
 
 FEATURES:
 
-* **New Rersource**: `azurerm_eventhub_namespace_schema_group` [GH-17635]
+* **New Resource**: `azurerm_eventhub_namespace_schema_group` [GH-17635]
+* **New Resource**: `azurerm_cdn_frontdoor_firewall_policy` [GH-17715]
+* **New Resource**: `azurerm_cdn_frontdoor_security_policy` [GH-17715]
 * **New Data Source**: `azurerm_dns_a_record` [GH-17477]
 * **New Data Source**: `azurerm_dns_aaaa_record` [GH-17477]
 * **New Data Source**: `azurerm_dns_caa_record` [GH-17477]
@@ -16,13 +18,19 @@ FEATURES:
 
 ENHANCEMENTS:
 
-* Dependencies: bump `go-azure-helpers` to `v0.39.0` [GH-17996]
-* Dependencies: bump `go-azure-sdk` to `v0.20220815.1092453` [GH-7998]
+* Dependencies: update `go-azure-helpers` to `v0.39.1` [GH-18015]
+* Dependencies: update `go-azure-sdk` to `v0.20220815.1092453` [GH-17998]
 * updating `dedicated_host_*` to use `hashicorp/go-azure-sdk` [GH-17616]
+* `dataprotection`: updating to use `hashicorp/go-azure-sdk` [GH-17700]
+* `dns` - updating to use `hashicorp/go-azure-sdk` [GH-17986]
 * Data Source: `azurerm_images` - now uses a logical id [GH-17766]
 * Data Source: `azurerm_management_group` - now exports the `management_group_ids`, `all_management_group_ids`, and `all_subscription_ids` attributes [GH-16208]
+* `azurerm_active_directory_domain_service` - support for the `kerberos_armoring_enabled` and `kerberos_rc4_encryption_enabled` properties [GH-17853]
+* `azurerm_application_gateway`: Support for `components` in `rewrite_rule_set.rewrite_rule.url` [GH-13899]
 * `azurerm_automation_account` - support for the `private_endpoint_connection` property [GH-17934]
 * `azurerm_automation_account` - support for the `encryption` block and `local_authentication_enabled` property [GH-17454]
+* `azurerm_batch_pool` - support for identity referencees in container registries [GH-17416]
+* `azurerm_data_factory_integration_runtime_azure_ssis` - support for the `express_vnet_injection` property [GH-17756]
 * `azurerm_firewall_policy_resource` - support for the `private_ranges` and `allow_sql_redirect` properties [GH-17842]
 * `azurerm_key_vault` - support for the `public_network_access_enabled` property [GH-17552]
 * `azurerm_linux_virtual_machine` - now supports delete Eviction policies [GH-17226]
@@ -31,9 +39,11 @@ ENHANCEMENTS:
 * `azurerm_mssql_server` - support `Disabled` for the `minimum_tls_version` property [GH-16595]
 * `azurerm_shared_image` - support for the `architecture` property [GH-17250]
 * `azurerm_storage_account` - support for the `default_to_oauth_authentication` property [GH-17116]
+* `azurerm_storage_table_entity` - support for specifying data types on entity properties [GH-15782]
 * `azurerm_shared_image_version` - support for `blob_uri` and `storage_account_id` [GH-17768]
 * `azurerm_windows_virtual_machine` - now supports delete Eviction policies [GH-17226]
 * `azurerm_windows_virtual_machine_scale_set` - now supports delete Eviction policies [GH-17226]
+* `azurerm_web_application_firewall_policy` - support for the `excluded_rule_set` property [GH-17757]
 * 
 Allow Delete eviction policy on Azure VMs #17226
 
